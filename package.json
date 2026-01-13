@@ -9,7 +9,12 @@
     "astro": "astro",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "db:start": "npx supabase start",
+    "db:stop": "npx supabase stop",
+    "db:reset": "npx supabase db reset",
+    "db:status": "npx supabase status",
+    "db:studio": "npx supabase studio"
   },
   "dependencies": {
     "@astrojs/node": "^9.4.3",
@@ -48,6 +53,7 @@
     "lint-staged": "15.5.0",
     "prettier": "^3.7.4",
     "prettier-plugin-astro": "0.14.1",
+    "supabase": "^2.72.6",
     "typescript-eslint": "8.28.0"
   },
   "lint-staged": {

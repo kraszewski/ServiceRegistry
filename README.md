@@ -51,6 +51,26 @@ ServiceRegistry is an open-source, single-tenant web application designed to hel
 |------------|-------------|
 | [Supabase](https://supabase.com/) | Backend-as-a-Service with PostgreSQL, Auth, and Row Level Security |
 
+#### Database Schema
+
+The application uses a PostgreSQL database with the following structure:
+
+- **ENUM Types**: `user_role`, `equipment_category`, `service_type`
+- **Core Tables**:
+  - `profiles` - User profiles with roles (1:1 with auth.users)
+  - `equipment` - Equipment inventory with auto-generated IDs (EQ-YYYY-NNNNN)
+  - `service_entries` - Service operation logs (inspections, repairs, maintenance)
+  - `equipment_counter` - Internal counter for ID generation (hidden via RLS)
+
+**Key Features**:
+- Full audit trail (created_at/by, updated_at/by)
+- Row Level Security (RLS) on all tables
+- Automatic equipment ID generation via triggers
+- Thread-safe counter with yearly reset
+- Cascading deletes where appropriate
+
+For detailed schema documentation, see [.ai/db-plan.md](.ai/db-plan.md) and [supabase/migrations/README.md](supabase/migrations/README.md).
+
 ### DevOps & Tooling
 
 | Technology | Description |
@@ -68,7 +88,7 @@ ServiceRegistry is an open-source, single-tenant web application designed to hel
 
 - **Node.js** `22.14.0` (use [nvm](https://github.com/nvm-sh/nvm) for version management)
 - **npm** (comes with Node.js)
-- **Supabase account** - for backend services
+- **Docker** - required for local Supabase development
 
 ### Installation
 
@@ -91,16 +111,35 @@ ServiceRegistry is an open-source, single-tenant web application designed to hel
    npm install
    ```
 
-4. **Configure environment variables**
+4. **Start Supabase locally**
+
+   ```bash
+   supabase start
+   ```
+
+   This will start a local Supabase instance with all services (PostgreSQL, Auth, Storage, etc.) and automatically apply all migrations from `supabase/migrations/`.
+
+5. **Configure environment variables**
 
    Create a `.env` file in the root directory with the following variables:
 
    ```env
-   PUBLIC_SUPABASE_URL=your_supabase_project_url
-   PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   PUBLIC_SUPABASE_URL=http://localhost:54321
+   PUBLIC_SUPABASE_ANON_KEY=your_local_anon_key_from_supabase_start
    ```
 
-5. **Start the development server**
+   The `supabase start` command will output all necessary credentials.
+
+6. **Create an owner account**
+
+   After Supabase starts, access Supabase Studio at `http://localhost:54323`:
+   - Navigate to Authentication → Users
+   - Create a new user
+   - Copy the user's UUID
+   - Go to Table Editor → profiles
+   - Find the created profile and update `role` to `'owner'`
+
+7. **Start the development server**
 
    ```bash
    npm run dev
@@ -108,7 +147,38 @@ ServiceRegistry is an open-source, single-tenant web application designed to hel
 
    The application will be available at `http://localhost:4321`
 
+### Working with the Database
+
+#### View Local Database
+
+Access Supabase Studio at: `http://localhost:54323`
+
+#### Reset Database
+
+To reset the local database and reapply all migrations:
+
+```bash
+supabase db reset
+```
+
+#### Create New Migration
+
+```bash
+supabase migration new migration_description
+```
+
+#### Push Migrations to Production
+
+```bash
+supabase link --project-ref your-project-ref
+supabase db push
+```
+
+For more details, see [supabase/migrations/README.md](supabase/migrations/README.md)
+
 ## Available Scripts
+
+### Application Scripts
 
 | Script | Command | Description |
 |--------|---------|-------------|
@@ -118,6 +188,16 @@ ServiceRegistry is an open-source, single-tenant web application designed to hel
 | `lint` | `npm run lint` | Run ESLint to check for code issues |
 | `lint:fix` | `npm run lint:fix` | Run ESLint and automatically fix issues |
 | `format` | `npm run format` | Format code using Prettier |
+
+### Database Scripts
+
+| Script | Command | Description |
+|--------|---------|-------------|
+| `db:start` | `npm run db:start` | Start local Supabase instance (requires Docker) |
+| `db:stop` | `npm run db:stop` | Stop local Supabase instance |
+| `db:reset` | `npm run db:reset` | Reset database and reapply all migrations |
+| `db:status` | `npm run db:status` | Show status of Supabase services |
+| `db:studio` | `npm run db:studio` | Open Supabase Studio in browser |
 
 ## Project Scope
 
