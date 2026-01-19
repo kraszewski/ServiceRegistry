@@ -7,7 +7,7 @@ const DEMO_MODE = true;
 
 export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.supabase = supabaseClient;
-  
+
   // DEMO MODE: Mock getUser to return a fake owner user
   if (DEMO_MODE) {
     const originalGetUser = context.locals.supabase.auth.getUser.bind(context.locals.supabase.auth);
@@ -31,6 +31,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
       };
     };
   }
-  
+
   return next();
 });
