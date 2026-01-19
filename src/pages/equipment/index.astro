@@ -3,10 +3,20 @@
  * Equipment List Page
  * Main view for browsing and managing equipment
  * Route: /equipment
+ * Protected: Requires authentication
  */
 
 import Layout from "@/layouts/Layout.astro";
 import EquipmentApp from "@/components/equipment/EquipmentApp.tsx";
+
+// Check authentication
+const supabase = Astro.locals.supabase;
+const { data: { user }, error } = await supabase.auth.getUser();
+
+// Redirect to login if not authenticated
+if (error || !user) {
+  return Astro.redirect("/login");
+}
 
 // Page metadata
 const title = "Sprzęt - ServiceRegistry";
