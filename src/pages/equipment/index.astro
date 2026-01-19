@@ -1,0 +1,17 @@
+---
+/**
+ * Equipment List Page
+ * Main view for browsing and managing equipment
+ * Route: /equipment
+ */
+
+import Layout from "@/layouts/Layout.astro";
+import EquipmentApp from "@/components/equipment/EquipmentApp.tsx";
+
+// Page metadata
+const title = "Sprzęt - ServiceRegistry";
+---
+
+<Layout title={title}>
+  <EquipmentApp client:only="react" />
+</Layout>

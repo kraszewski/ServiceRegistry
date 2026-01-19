@@ -50,10 +50,7 @@ export type ServiceEntryListParams = z.infer<typeof serviceEntryListParamsSchema
  * service_timestamp is optional - defaults to current time if not provided.
  */
 export const createServiceEntrySchema = z.object({
-  service_timestamp: z
-    .string()
-    .datetime({ message: "Invalid datetime format (expected ISO 8601)" })
-    .optional(),
+  service_timestamp: z.string().datetime({ message: "Invalid datetime format (expected ISO 8601)" }).optional(),
   service_type: serviceTypeEnum,
   description: z.string().min(5, "Description must be at least 5 characters"),
 });

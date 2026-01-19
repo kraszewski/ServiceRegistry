@@ -6,10 +6,7 @@
  */
 import type { APIRoute } from "astro";
 
-import {
-  createEquipmentSchema,
-  equipmentListParamsSchema,
-} from "../../../lib/schemas/equipment.schema";
+import { createEquipmentSchema, equipmentListParamsSchema } from "../../../lib/schemas/equipment.schema";
 import { createEquipmentService } from "../../../lib/services/equipment.service";
 import type { ErrorResponse } from "../../../types";
 
@@ -50,9 +47,7 @@ export const GET: APIRoute = async ({ locals, request }) => {
   };
 
   // Remove null values so Zod defaults can be applied
-  const queryParams = Object.fromEntries(
-    Object.entries(rawParams).filter(([, value]) => value !== null)
-  );
+  const queryParams = Object.fromEntries(Object.entries(rawParams).filter(([, value]) => value !== null));
 
   // 2. Validate parameters
   const validationResult = equipmentListParamsSchema.safeParse(queryParams);
@@ -168,10 +163,7 @@ export const POST: APIRoute = async ({ locals, request }) => {
   // 4. Create equipment
   try {
     const equipmentService = createEquipmentService(supabase);
-    const result = await equipmentService.createEquipment(
-      validationResult.data,
-      user.id
-    );
+    const result = await equipmentService.createEquipment(validationResult.data, user.id);
 
     return new Response(JSON.stringify(result), {
       status: 201,

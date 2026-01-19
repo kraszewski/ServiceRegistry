@@ -35,9 +35,7 @@ export const equipmentCategoryEnum = z.enum([
 export const equipmentListParamsSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(50),
-  sort: z
-    .enum(["created_at", "name", "equipment_id", "category", "manufacturer"])
-    .default("created_at"),
+  sort: z.enum(["created_at", "name", "equipment_id", "category", "manufacturer"]).default("created_at"),
   order: z.enum(["asc", "desc"]).default("desc"),
   category: equipmentCategoryEnum.optional(),
   search: z.string().optional(),
@@ -65,29 +63,16 @@ export type EquipmentIdInput = z.infer<typeof equipmentIdSchema>;
  * All required fields must be provided.
  */
 export const createEquipmentSchema = z.object({
-  name: z
-    .string()
-    .min(1, "Name is required")
-    .max(100, "Name must be at most 100 characters"),
+  name: z.string().min(1, "Name is required").max(100, "Name must be at most 100 characters"),
   category: equipmentCategoryEnum,
-  manufacturer: z
-    .string()
-    .min(1, "Manufacturer is required")
-    .max(100, "Manufacturer must be at most 100 characters"),
-  model: z
-    .string()
-    .min(1, "Model is required")
-    .max(100, "Model must be at most 100 characters"),
+  manufacturer: z.string().min(1, "Manufacturer is required").max(100, "Manufacturer must be at most 100 characters"),
+  model: z.string().min(1, "Model is required").max(100, "Model must be at most 100 characters"),
   serial_number: z
     .string()
     .min(1, "Serial number is required")
     .max(100, "Serial number must be at most 100 characters"),
   description: z.string().nullable().optional(),
-  location: z
-    .string()
-    .max(200, "Location must be at most 200 characters")
-    .nullable()
-    .optional(),
+  location: z.string().max(200, "Location must be at most 200 characters").nullable().optional(),
   purchase_date: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (expected YYYY-MM-DD)")

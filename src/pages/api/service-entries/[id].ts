@@ -7,10 +7,7 @@
  */
 import type { APIRoute } from "astro";
 
-import {
-  serviceEntryIdSchema,
-  updateServiceEntrySchema,
-} from "../../../lib/schemas/service-entry.schema";
+import { serviceEntryIdSchema, updateServiceEntrySchema } from "../../../lib/schemas/service-entry.schema";
 import { createServiceEntryService } from "../../../lib/services/service-entry.service";
 import type { DeleteResponse, ErrorResponse } from "../../../types";
 
@@ -173,11 +170,7 @@ export const PATCH: APIRoute = async ({ params, locals, request }) => {
   // 6. Update service entry
   try {
     const serviceEntryService = createServiceEntryService(supabase);
-    const result = await serviceEntryService.updateServiceEntry(
-      idValidation.data,
-      validationResult.data,
-      user.id
-    );
+    const result = await serviceEntryService.updateServiceEntry(idValidation.data, validationResult.data, user.id);
 
     return new Response(JSON.stringify(result), {
       status: 200,

@@ -13,17 +13,9 @@ import { z } from "zod";
  * @property name - User display name, minimum 2 characters, maximum 100, required
  */
 export const createUserSchema = z.object({
-  email: z
-    .string()
-    .min(1, "Email is required")
-    .email("Invalid email format"),
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters"),
-  name: z
-    .string()
-    .min(2, "Name must be at least 2 characters")
-    .max(100, "Name must be at most 100 characters"),
+  email: z.string().min(1, "Email is required").email("Invalid email format"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  name: z.string().min(2, "Name must be at least 2 characters").max(100, "Name must be at most 100 characters"),
 });
 
 /** Type inferred from createUserSchema */

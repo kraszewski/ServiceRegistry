@@ -9,10 +9,18 @@ import node from "@astrojs/node";
 // https://astro.build/config
 export default defineConfig({
   output: "server",
-  integrations: [react(), sitemap()],
+  integrations: [
+    react({
+      include: ['**/react/*', '**/components/**/*.tsx', '**/components/**/*.jsx'],
+    }),
+    sitemap()
+  ],
   server: { port: 3000 },
   vite: {
     plugins: [tailwindcss()],
+    ssr: {
+      noExternal: ['@radix-ui/*'],
+    },
   },
   adapter: node({
     mode: "standalone",

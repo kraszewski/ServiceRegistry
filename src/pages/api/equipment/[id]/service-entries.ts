@@ -7,10 +7,7 @@
 import type { APIRoute } from "astro";
 
 import { equipmentIdSchema } from "../../../../lib/schemas/equipment.schema";
-import {
-  createServiceEntrySchema,
-  serviceEntryListParamsSchema,
-} from "../../../../lib/schemas/service-entry.schema";
+import { createServiceEntrySchema, serviceEntryListParamsSchema } from "../../../../lib/schemas/service-entry.schema";
 import { createServiceEntryService } from "../../../../lib/services/service-entry.service";
 import type { ErrorResponse } from "../../../../types";
 
@@ -85,10 +82,7 @@ export const GET: APIRoute = async ({ params, locals, request }) => {
   // 4. Fetch service entries
   try {
     const serviceEntryService = createServiceEntryService(supabase);
-    const result = await serviceEntryService.listByEquipment(
-      idValidation.data,
-      paramsValidation.data
-    );
+    const result = await serviceEntryService.listByEquipment(idValidation.data, paramsValidation.data);
 
     return new Response(JSON.stringify(result), {
       status: 200,
@@ -190,11 +184,7 @@ export const POST: APIRoute = async ({ params, locals, request }) => {
   // 5. Create service entry
   try {
     const serviceEntryService = createServiceEntryService(supabase);
-    const result = await serviceEntryService.createServiceEntry(
-      idValidation.data,
-      validationResult.data,
-      user.id
-    );
+    const result = await serviceEntryService.createServiceEntry(idValidation.data, validationResult.data, user.id);
 
     return new Response(JSON.stringify(result), {
       status: 201,

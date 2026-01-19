@@ -7,10 +7,7 @@
  */
 import type { APIRoute } from "astro";
 
-import {
-  equipmentIdSchema,
-  updateEquipmentSchema,
-} from "../../../../lib/schemas/equipment.schema";
+import { equipmentIdSchema, updateEquipmentSchema } from "../../../../lib/schemas/equipment.schema";
 import { createEquipmentService } from "../../../../lib/services/equipment.service";
 import type { DeleteResponse, ErrorResponse } from "../../../../types";
 
@@ -183,11 +180,7 @@ export const PATCH: APIRoute = async ({ params, locals, request }) => {
   // 6. Update equipment
   try {
     const equipmentService = createEquipmentService(supabase);
-    const result = await equipmentService.updateEquipment(
-      id,
-      validationResult.data,
-      user.id
-    );
+    const result = await equipmentService.updateEquipment(id, validationResult.data, user.id);
 
     return new Response(JSON.stringify(result), {
       status: 200,

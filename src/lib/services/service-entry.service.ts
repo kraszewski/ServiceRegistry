@@ -34,10 +34,7 @@ export class ServiceEntryService {
    * @throws Error with message "Equipment not found" if equipment doesn't exist
    * @throws Error if database query fails
    */
-  async listByEquipment(
-    equipmentId: string,
-    params: ServiceEntryListParams
-  ): Promise<ServiceEntryListResponse> {
+  async listByEquipment(equipmentId: string, params: ServiceEntryListParams): Promise<ServiceEntryListResponse> {
     const { page, limit } = params;
     const offset = (page - 1) * limit;
 
@@ -278,8 +275,6 @@ export class ServiceEntryService {
  * @param supabase - Supabase client instance (from context.locals)
  * @returns New ServiceEntryService instance
  */
-export function createServiceEntryService(
-  supabase: SupabaseClient<Database>
-): ServiceEntryService {
+export function createServiceEntryService(supabase: SupabaseClient<Database>): ServiceEntryService {
   return new ServiceEntryService(supabase);
 }

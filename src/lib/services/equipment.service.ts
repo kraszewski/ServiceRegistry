@@ -33,22 +33,13 @@ export class EquipmentService {
    * @throws Error if database query fails
    */
   async listEquipment(params: EquipmentListParams): Promise<EquipmentListResponse> {
-    const {
-      page = 1,
-      limit = 50,
-      sort = "created_at",
-      order = "desc",
-      category,
-      search,
-    } = params;
+    const { page = 1, limit = 50, sort = "created_at", order = "desc", category, search } = params;
 
     const offset = (page - 1) * limit;
 
     // Build query with join on profiles for created_by
-    let query = this.supabase
-      .from("equipment")
-      .select(
-        `
+    let query = this.supabase.from("equipment").select(
+      `
         id,
         equipment_id,
         name,
@@ -62,8 +53,8 @@ export class EquipmentService {
         created_at,
         created_by_profile:profiles!equipment_created_by_fkey(id, name)
       `,
-        { count: "exact" }
-      );
+      { count: "exact" }
+    );
 
     // Apply filters
     if (category) {
@@ -75,9 +66,7 @@ export class EquipmentService {
     }
 
     // Apply sorting and pagination
-    query = query
-      .order(sort, { ascending: order === "asc" })
-      .range(offset, offset + limit - 1);
+    query = query.order(sort, { ascending: order === "asc" }).range(offset, offset + limit - 1);
 
     const { data, count, error } = await query;
 
@@ -122,14 +111,9 @@ export class EquipmentService {
    * @returns Created equipment as EquipmentResponseDTO
    * @throws Error if equipment_id generation fails or insert fails
    */
-  async createEquipment(
-    command: CreateEquipmentCommand,
-    userId: string
-  ): Promise<EquipmentResponseDTO> {
+  async createEquipment(command: CreateEquipmentCommand, userId: string): Promise<EquipmentResponseDTO> {
     // 1. Generate equipment_id using database function
-    const { data: equipmentId, error: idError } = await this.supabase.rpc(
-      "generate_equipment_id"
-    );
+    const { data: equipmentId, error: idError } = await this.supabase.rpc("generate_equipment_id");
 
     if (idError || !equipmentId) {
       throw new Error(`Failed to generate equipment ID: ${idError?.message}`);
@@ -232,11 +216,7 @@ export class EquipmentService {
    * @returns Updated equipment as EquipmentResponseDTO
    * @throws Error if equipment not found or serial_number conflict
    */
-  async updateEquipment(
-    id: string,
-    command: UpdateEquipmentCommand,
-    userId: string
-  ): Promise<EquipmentResponseDTO> {
+  async updateEquipment(id: string, command: UpdateEquipmentCommand, userId: string): Promise<EquipmentResponseDTO> {
     // Build update object with only provided fields
     const updateData: Record<string, unknown> = {
       ...command,
@@ -250,12 +230,7 @@ export class EquipmentService {
       }
     });
 
-    const { data, error } = await this.supabase
-      .from("equipment")
-      .update(updateData)
-      .eq("id", id)
-      .select()
-      .single();
+    const { data, error } = await this.supabase.from("equipment").update(updateData).eq("id", id).select().single();
 
     if (error) {
       // Check for unique constraint violation on serial_number
@@ -310,8 +285,6 @@ export class EquipmentService {
  * @param supabase - Supabase client instance (from context.locals)
  * @returns New EquipmentService instance
  */
-export function createEquipmentService(
-  supabase: SupabaseClient<Database>
-): EquipmentService {
+export function createEquipmentService(supabase: SupabaseClient<Database>): EquipmentService {
   return new EquipmentService(supabase);
 }
