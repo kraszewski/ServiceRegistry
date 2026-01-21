@@ -24,8 +24,7 @@ export interface UseUserResult {
 /**
  * Hook for accessing current user and role information
  * Fetches user profile from API based on session
- * 
- * DEMO MODE: Returns mock owner user for testing without authentication
+ * Works with DEMO_MODE - returns mock user when enabled
  */
 export function useUser(): UseUserResult {
   const [user, setUser] = useState<User | null>(null);
@@ -38,24 +37,6 @@ export function useUser(): UseUserResult {
 
     const fetchUserProfile = async () => {
       try {
-        // DEMO MODE: Return mock user for testing
-        // TODO: Remove this when authentication is implemented
-        if (mounted) {
-          const mockUser: User = {
-            id: "demo-user-id",
-            email: "demo@example.com",
-            name: "Demo User",
-            role: "owner",
-          };
-          
-          setUser(mockUser);
-          setRole("owner");
-          setIsLoading(false);
-          return;
-        }
-
-        // Original implementation (commented out for demo)
-        /*
         const response = await fetch("/api/auth/session");
         
         if (!response.ok) {
@@ -77,7 +58,6 @@ export function useUser(): UseUserResult {
           setRole(data.user?.role || null);
           setIsLoading(false);
         }
-        */
       } catch (err) {
         if (mounted) {
           setError(err instanceof Error ? err : new Error("Unknown error"));

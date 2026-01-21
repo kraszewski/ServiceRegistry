@@ -1,16 +1,13 @@
 import { defineMiddleware } from "astro:middleware";
 
 import { supabaseClient } from "../db/supabase.client.ts";
-
-// DEMO MODE: Mock authenticated session for development
-const DEMO_MODE = true;
+import { DEMO_MODE } from "../config.ts";
 
 export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.supabase = supabaseClient;
 
   // DEMO MODE: Mock getUser to return a fake owner user
   if (DEMO_MODE) {
-    const originalGetUser = context.locals.supabase.auth.getUser.bind(context.locals.supabase.auth);
     context.locals.supabase.auth.getUser = async () => {
       // Return mock owner user for demo
       return {
@@ -25,7 +22,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
             app_metadata: {},
             aud: "authenticated",
             created_at: new Date().toISOString(),
-          } as any,
+          },
         },
         error: null,
       };

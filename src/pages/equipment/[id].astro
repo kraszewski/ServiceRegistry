@@ -1,0 +1,36 @@
+---
+/**
+ * Equipment Details Page
+ * Protected route - requires authentication
+ * Shows equipment details and service history
+ */
+
+import Layout from "@/layouts/Layout.astro";
+import { EquipmentDetailsAppWrapper } from "@/components/equipment/details/EquipmentDetailsAppWrapper";
+import { DEMO_MODE } from "@/config.ts";
+
+export const prerender = false;
+
+const { id } = Astro.params;
+
+// Validate id parameter exists
+if (!id) {
+  return Astro.redirect("/equipment");
+}
+
+// Check authentication
+const supabase = Astro.locals.supabase;
+const { data: { user }, error } = await supabase.auth.getUser();
+
+// Redirect to login if not authenticated (skip in DEMO MODE)
+if (!DEMO_MODE && (error || !user)) {
+  return Astro.redirect("/login");
+}
+
+// Page metadata
+const title = `Szczegóły sprzętu - ServiceRegistry`;
+---
+
+<Layout title={title} currentPage="equipment">
+  <EquipmentDetailsAppWrapper client:load equipmentId={id} />
+</Layout>

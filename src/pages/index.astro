@@ -1,8 +1,9 @@
 ---
 import Welcome from "../components/Welcome.astro";
 import Layout from "../layouts/Layout.astro";
+import { DEMO_MODE } from "../config.ts";
 ---
 
-<Layout>
-  <Welcome />
+<Layout currentPage="home">
+  <Welcome demoMode={DEMO_MODE} />
 </Layout>

@@ -1,10 +1,10 @@
 /**
- * Equipment App Wrapper
- * Wraps EquipmentListPage with necessary providers
+ * Users App Wrapper
+ * Wraps UsersPage with necessary providers
  */
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { EquipmentListPage } from "./EquipmentListPage";
+import { UsersPage } from "./UsersPage";
 
 // Create QueryClient outside component to avoid recreating on each render
 const queryClient = new QueryClient({
@@ -20,10 +20,10 @@ const queryClient = new QueryClient({
   },
 });
 
-export default function EquipmentApp() {
+export default function UsersApp() {
   return (
     <QueryClientProvider client={queryClient}>
-      <EquipmentListPage />
+      <UsersPage />
     </QueryClientProvider>
   );
 }

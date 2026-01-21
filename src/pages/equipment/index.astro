@@ -8,13 +8,14 @@
 
 import Layout from "@/layouts/Layout.astro";
 import EquipmentApp from "@/components/equipment/EquipmentApp.tsx";
+import { DEMO_MODE } from "@/config.ts";
 
 // Check authentication
 const supabase = Astro.locals.supabase;
 const { data: { user }, error } = await supabase.auth.getUser();
 
-// Redirect to login if not authenticated
-if (error || !user) {
+// Redirect to login if not authenticated (skip in DEMO MODE)
+if (!DEMO_MODE && (error || !user)) {
   return Astro.redirect("/login");
 }
 
@@ -22,6 +23,6 @@ if (error || !user) {
 const title = "Sprzęt - ServiceRegistry";
 ---
 
-<Layout title={title}>
-  <EquipmentApp client:only="react" />
+<Layout title={title} currentPage="equipment">
+  <EquipmentApp client:load />
 </Layout>

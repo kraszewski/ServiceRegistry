@@ -5,11 +5,12 @@
  * POST /api/users - Creates a new worker account (owner only)
  */
 import type { APIRoute } from "astro";
+import { DEMO_MODE } from "@/config";
 
 import { paginationSchema } from "../../../lib/schemas/pagination.schema";
 import { createUserSchema } from "../../../lib/schemas/user.schema";
 import { createUserService } from "../../../lib/services/user.service";
-import type { ErrorResponse } from "../../../types";
+import type { ErrorResponse, UserListItemDTO, UserListResponse } from "../../../types";
 
 export const prerender = false;
 
@@ -70,20 +71,51 @@ export const GET: APIRoute = async ({ locals, request }) => {
   }
 
   // 4. Check authorization (owner only)
-  const { data: isOwner, error: roleError } = await supabase.rpc("is_owner");
+  // In DEMO_MODE, skip database RPC call and assume owner role
+  if (!DEMO_MODE) {
+    const { data: isOwner, error: roleError } = await supabase.rpc("is_owner");
 
-  if (roleError || !isOwner) {
-    const errorResponse: ErrorResponse = {
-      error: "Only owner can perform this action",
-    };
-    return new Response(JSON.stringify(errorResponse), {
-      status: 403,
-      headers: { "Content-Type": "application/json" },
-    });
+    if (roleError || !isOwner) {
+      const errorResponse: ErrorResponse = {
+        error: "Only owner can perform this action",
+      };
+      return new Response(JSON.stringify(errorResponse), {
+        status: 403,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
   }
 
   // 5. Fetch users list
   try {
+    // DEMO MODE: Return mock users list
+    if (DEMO_MODE) {
+      const mockUsers: UserListItemDTO[] = [
+        {
+          id: "00000000-0000-0000-0000-000000000001",
+          email: "demo@example.com",
+          name: "Demo User",
+          role: "owner",
+          created_at: new Date().toISOString(),
+        },
+      ];
+
+      const mockResponse: UserListResponse = {
+        data: mockUsers,
+        pagination: {
+          page,
+          limit,
+          total: mockUsers.length,
+          totalPages: 1,
+        },
+      };
+
+      return new Response(JSON.stringify(mockResponse), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     const userService = createUserService(supabase);
     const result = await userService.listUsers(page, limit);
 
@@ -138,16 +170,19 @@ export const POST: APIRoute = async ({ locals, request }) => {
   }
 
   // 2. Check authorization (owner only)
-  const { data: isOwner, error: roleError } = await supabase.rpc("is_owner");
+  // In DEMO_MODE, skip database RPC call and assume owner role
+  if (!DEMO_MODE) {
+    const { data: isOwner, error: roleError } = await supabase.rpc("is_owner");
 
-  if (roleError || !isOwner) {
-    const errorResponse: ErrorResponse = {
-      error: "Only owner can perform this action",
-    };
-    return new Response(JSON.stringify(errorResponse), {
-      status: 403,
-      headers: { "Content-Type": "application/json" },
-    });
+    if (roleError || !isOwner) {
+      const errorResponse: ErrorResponse = {
+        error: "Only owner can perform this action",
+      };
+      return new Response(JSON.stringify(errorResponse), {
+        status: 403,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
   }
 
   // 3. Parse and validate request body
@@ -176,6 +211,24 @@ export const POST: APIRoute = async ({ locals, request }) => {
 
   // 4. Create user
   try {
+    // DEMO MODE: Return mock user creation response
+    if (DEMO_MODE) {
+      const mockUser: UserListItemDTO = {
+        id: `demo-user-${Date.now()}`,
+        email: validationResult.data.email,
+        name: validationResult.data.name,
+        role: "worker",
+        created_at: new Date().toISOString(),
+      };
+
+      console.log("DEMO MODE: Mock user created:", mockUser);
+
+      return new Response(JSON.stringify(mockUser), {
+        status: 201,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     const userService = createUserService(supabase);
     const result = await userService.createUser(validationResult.data);
 

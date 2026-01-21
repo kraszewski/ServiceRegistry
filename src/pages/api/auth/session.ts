@@ -5,6 +5,7 @@
  */
 
 import type { APIRoute } from "astro";
+import { DEMO_MODE } from "@/config";
 
 export const prerender = false;
 
@@ -12,6 +13,21 @@ export const GET: APIRoute = async ({ locals, cookies }) => {
   const { supabase } = locals;
 
   try {
+    // DEMO MODE: Return mock owner user
+    if (DEMO_MODE) {
+      return new Response(
+        JSON.stringify({
+          user: {
+            id: "00000000-0000-0000-0000-000000000001",
+            email: "demo@example.com",
+            name: "Demo User",
+            role: "owner",
+          },
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
     // Get session from cookies
     const accessToken = cookies.get("sb-access-token")?.value;
     const refreshToken = cookies.get("sb-refresh-token")?.value;

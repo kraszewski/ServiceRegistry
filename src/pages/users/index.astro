@@ -1,0 +1,49 @@
+---
+/**
+ * Users Management Page
+ * View for managing user accounts (owner only)
+ * Route: /users
+ * Protected: Requires authentication + owner role
+ */
+
+import Layout from "@/layouts/Layout.astro";
+import UsersApp from "@/components/users/UsersApp.tsx";
+import { DEMO_MODE } from "@/config.ts";
+
+// Check authentication
+const supabase = Astro.locals.supabase;
+const { data: { user }, error } = await supabase.auth.getUser();
+
+// Redirect to login if not authenticated (skip in DEMO MODE)
+if (!DEMO_MODE && (error || !user)) {
+  return Astro.redirect("/login");
+}
+
+// Get user profile to check role (only if user exists)
+let userRole = "worker";
+
+if (user) {
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  // Check if user is owner
+  // In DEMO MODE, profile might not exist, so check user_metadata as fallback
+  userRole = profile?.role || user.user_metadata?.role || "worker";
+}
+
+// Redirect to equipment page if not owner
+if (userRole !== "owner") {
+  const redirectUrl = new URL("/equipment", Astro.url.origin);
+  return Astro.redirect(redirectUrl.toString());
+}
+
+// Page metadata
+const title = "Zarządzanie Użytkownikami - ServiceRegistry";
+---
+
+<Layout title={title} currentPage="users">
+  <UsersApp client:load />
+</Layout>

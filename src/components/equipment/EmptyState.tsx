@@ -3,10 +3,10 @@
  * Displays empty state with different variants based on context
  */
 
-import { Package, Search } from "lucide-react";
+import { Package, Search, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export type EmptyStateVariant = "no-data" | "no-results";
+export type EmptyStateVariant = "no-data" | "no-results" | "no-service-entries";
 
 interface EmptyStateProps {
   variant: EmptyStateVariant;
@@ -29,6 +29,12 @@ export function EmptyState({ variant, onAction }: EmptyStateProps) {
       title: "Nie znaleziono sprzętu",
       description: "Nie znaleziono sprzętu spełniającego kryteria wyszukiwania. Spróbuj zmienić filtry.",
       actionLabel: "Wyczyść filtry",
+    },
+    "no-service-entries": {
+      icon: FileText,
+      title: "Brak wpisów serwisowych",
+      description: "Nie ma jeszcze żadnych wpisów serwisowych. Dodaj pierwszy wpis, aby rozpocząć śledzenie historii.",
+      actionLabel: "Dodaj wpis",
     },
   }[variant];
 

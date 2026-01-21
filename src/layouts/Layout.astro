@@ -1,11 +1,14 @@
 ---
 import "../styles/global.css";
+import { Toaster } from "@/components/ui/sonner";
+import { Navigation } from "@/components/shared/Navigation";
 
 interface Props {
   title?: string;
+  currentPage?: "home" | "equipment" | "users";
 }
 
-const { title = "10x Astro Starter" } = Astro.props;
+const { title = "ServiceRegistry", currentPage } = Astro.props;
 ---
 
 <!doctype html>
@@ -18,7 +21,9 @@ const { title = "10x Astro Starter" } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
+    <Navigation client:load currentPage={currentPage} />
     <slot />
+    <Toaster client:load />
   </body>
 </html>
 
