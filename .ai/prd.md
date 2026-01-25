@@ -61,7 +61,7 @@ Założenia: Single-tenant, web-only, brak trybu offline, brak powiadomień, bra
 ## 5. Historyjki użytkowników
 US-001 Logowanie  
 Opis: Użytkownik chce się zalogować, aby korzystać z aplikacji.  
-Kryteria akceptacji: Formularz email/hasło; walidacja; poprawne dane logują i prowadzą do dashboardu; niepoprawne pokazują błąd; wylogowanie dostępne.
+Kryteria akceptacji: Formularz email/hasło; walidacja; poprawne dane logują i prowadzą do strony ze sprzętem; niepoprawne pokazują błąd; wylogowanie dostępne.
 
 US-002 Dodanie pracownika (owner)  
 Opis: Właściciel chce dodać konto pracownika.  

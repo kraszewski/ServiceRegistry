@@ -25,7 +25,6 @@ export function EquipmentDetailsPageHeader({
   onDelete,
 }: EquipmentDetailsPageHeaderProps) {
   const breadcrumbItems: BreadcrumbItem[] = [
-    { label: "Dashboard", href: "/" },
     { label: "Sprzęt", href: "/equipment" },
     { label: equipment.name },
   ];

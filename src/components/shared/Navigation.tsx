@@ -4,12 +4,12 @@
  * Shows DEMO MODE indicator when enabled
  */
 
-import { Home, Package, Users } from "lucide-react";
+import { Package, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DEMO_MODE } from "@/config";
 
 interface NavigationProps {
-  currentPage?: "home" | "equipment" | "users";
+  currentPage?: "equipment" | "users";
 }
 
 /**
@@ -21,17 +21,6 @@ export function Navigation({ currentPage }: NavigationProps) {
       <div className="container mx-auto px-4 sm:px-6 py-3 max-w-7xl">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
-            <Button
-              variant={currentPage === "home" ? "default" : "ghost"}
-              size="sm"
-              asChild
-            >
-              <a href="/" className="flex items-center gap-2">
-                <Home className="h-4 w-4" />
-                <span className="hidden sm:inline">Start</span>
-              </a>
-            </Button>
-
             <Button
               variant={currentPage === "equipment" ? "default" : "ghost"}
               size="sm"

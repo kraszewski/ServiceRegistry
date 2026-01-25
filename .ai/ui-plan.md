@@ -51,46 +51,9 @@ ServiceRegistry to aplikacja webowa do zarządzania sprzętem i historią serwis
 - Labels powiązane z inputs (for/id)
 - Error messages announced dla screen readers
 - CSRF protection przez Supabase
-- Redirect do /dashboard jeśli już zalogowany
+- Redirect do /equipment jeśli już zalogowany
 
-### 2.2 Dashboard (`/dashboard`)
-
-**Dostępność**: Protected (wszystkie role)
-
-**Główny cel**: Przegląd najważniejszych informacji i szybki dostęp do kluczowych akcji
-
-**Kluczowe informacje do wyświetlenia**:
-- Statystyki: liczba sprzętu, wpisy serwisowe dziś, wpisy w miesiącu
-- Lista 5 ostatnich wpisów serwisowych (z linkami do equipment details)
-- Quick actions: "Dodaj sprzęt", pole wyszukiwania po ID
-
-**Kluczowe komponenty widoku**:
-- **StatsCard** (3x): Karty z ikoną, liczbą i labelą dla statystyk
-- **RecentEntriesSection**: Sekcja z ostatnimi wpisami
-  - **ServiceEntryCard**: Karta pojedynczego wpisu (equipment name/ID, service type badge, timestamp, performer)
-- **QuickActionsBar**: Przycisk "Dodaj sprzęt" i pole wyszukiwania
-
-**Layout Desktop**:
-- Grid 3 kolumny dla statystyk (równe szerokości)
-- Sekcja "Ostatnie wpisy" poniżej (full-width)
-- Quick actions na górze (prawy górny róg sekcji)
-
-**Layout Mobile**:
-- Single column
-- Statystyki w kartach (vertical stack)
-- Ostatnie wpisy (vertical stack)
-- Quick actions sticky bottom
-
-**UX, dostępność i względy bezpieczeństwa**:
-- Skeleton loaders dla statystyk podczas ładowania
-- Skeleton dla listy wpisów
-- Empty state "Brak ostatnich wpisów" z ilustracją jeśli brak danych
-- Linki do equipment details zachowują context (breadcrumbs)
-- Semantic HTML (main, section, article)
-- ARIA labels dla interaktywnych elementów
-- Server-side protection w middleware przed renderowaniem
-
-### 2.3 Equipment List (`/equipment`)
+### 2.2 Equipment List (`/equipment`)
 
 **Dostępność**: Protected (wszystkie role)
 
@@ -137,7 +100,7 @@ ServiceRegistry to aplikacja webowa do zarządzania sprzętem i historią serwis
 - ARIA sort attributes dla sortable columns
 - Server-side pagination (limit 50, max 100)
 
-### 2.4 Equipment Details (`/equipment/[id]`)
+### 2.3 Equipment Details (`/equipment/[id]`)
 
 **Dostępność**: Protected (wszystkie role)
 
@@ -193,7 +156,7 @@ ServiceRegistry to aplikacja webowa do zarządzania sprzętem i historią serwis
 - ARIA labels dla timeline
 - Focus management w modals/drawers
 
-### 2.5 User Management (`/users`)
+### 2.4 User Management (`/users`)
 
 **Dostępność**: Protected (owner only)
 
@@ -233,11 +196,11 @@ ServiceRegistry to aplikacja webowa do zarządzania sprzętem i historią serwis
 - Nie można usunąć innych ownerów (button hidden)
 - Optimistic update listy po dodaniu/usunięciu
 - Server-side route protection (middleware sprawdza rolę owner)
-- Redirect do /dashboard z toast error jeśli worker próbuje dostać się do /users
+- Redirect do /equipment z toast error jeśli worker próbuje dostać się do /users
 - Keyboard navigation
 - ARIA labels dla destructive actions
 
-### 2.6 Not Found (`/404`)
+### 2.5 Not Found (`/404`)
 
 **Dostępność**: Publiczna
 
@@ -250,17 +213,17 @@ ServiceRegistry to aplikacja webowa do zarządzania sprzętem i historią serwis
 **Kluczowe komponenty widoku**:
 - **ErrorIllustration**: Ilustracja 404
 - **Message**: Komunikat błędu
-- **BackButton**: Przycisk "Wróć do dashboardu"
+- **BackButton**: Przycisk "Wróć do sprzętu"
 
 **UX, dostępność i względy bezpieczeństwa**:
 - Centered layout
 - Friendly message (nie techniczny żargon)
 - Clear CTA
-- Link do dashboardu lub poprzedniej strony
+- Link do listy sprzętu lub poprzedniej strony
 
 ## 3. Mapa podróży użytkownika
 
-### Journey 1: Logowanie i przegląd dashboardu (US-001)
+### Journey 1: Logowanie i przegląd sprzętu (US-001)
 
 1. Użytkownik otwiera aplikację
 2. System wykrywa brak sesji → redirect do `/login`
@@ -271,17 +234,17 @@ ServiceRegistry to aplikacja webowa do zarządzania sprzętem i historią serwis
 7. **Loading State**: Button disabled + spinner
 8. **Success Path**: 
    - Session cookie ustawiony
-   - Redirect do `/dashboard`
+   - Redirect do `/equipment`
    - **API Call**: `GET /api/auth/me` (pobiera profil użytkownika)
-   - Wyświetla statystyki i ostatnie wpisy
+   - Wyświetla listę sprzętu
 9. **Error Path**:
    - 401 (nieprawidłowe dane) → Error alert "Nieprawidłowy email lub hasło"
    - 500 → Error alert "Wystąpił błąd serwera"
-10. Użytkownik może kliknąć quick action "Dodaj sprzęt" → Journey 2
+10. Użytkownik może kliknąć "Dodaj sprzęt" → Journey 2
 
 ### Journey 2: Dodawanie sprzętu (US-004)
 
-1. Użytkownik klika "+ Dodaj sprzęt" (z dashboardu lub listy sprzętu)
+1. Użytkownik klika "+ Dodaj sprzęt" (z listy sprzętu)
 2. Otwiera się **EquipmentFormDialog** (Modal Dialog)
 3. Formularz wyświetla sekcję "Dane wymagane"
 4. Użytkownik wypełnia:
@@ -349,7 +312,7 @@ ServiceRegistry to aplikacja webowa do zarządzania sprzętem i historią serwis
 
 1. Owner klika "Użytkownicy" w nawigacji
 2. **Middleware Check**: Server-side sprawdza rolę
-3. **If worker**: Redirect do `/dashboard` + Toast "Brak uprawnień"
+3. **If worker**: Redirect do `/equipment` + Toast "Brak uprawnień"
 4. **If owner**: Renderuje `/users`
 5. **API Call**: `GET /api/users?page=1&limit=50`
 6. **Loading State**: Skeleton dla tabeli/kart
@@ -426,14 +389,13 @@ ServiceRegistry to aplikacja webowa do zarządzania sprzętem i historią serwis
 
 ```
 +------------------------------------------------------------------+
-| [Logo] Dashboard | Sprzęt | Użytkownicy*  [Search] [Avatar ▾] |
+| [Logo] Sprzęt | Użytkownicy*         [Search] [Avatar ▾] |
 +------------------------------------------------------------------+
 ```
 
 **Elementy**:
-- **Logo** (lewy górny róg): Link do `/dashboard`
+- **Logo** (lewy górny róg): Link do `/equipment`
 - **Główne menu** (horizontal):
-  - "Dashboard" → `/dashboard`
   - "Sprzęt" → `/equipment`
   - "Użytkownicy" → `/users` (visible only for owner)
 - **Search Bar** (centrum): Pole wyszukiwania po Equipment ID z ikoną lupki
@@ -460,7 +422,6 @@ Po kliknięciu hamburger menu (☰):
 |                                  |
 |  [Search Equipment ID...]        |
 |                                  |
-|  Dashboard                       |
 |  Sprzęt                          |
 |  Użytkownicy*                    |
 |                                  |
@@ -476,31 +437,30 @@ Po kliknięciu hamburger menu (☰):
 
 ### 4.2 Breadcrumbs
 
-Wyświetlane na wszystkich stronach poza login i dashboard (opcjonalnie):
+Wyświetlane na stronach szczegółów:
 
-- `/equipment` → `Dashboard > Sprzęt`
-- `/equipment/[id]` → `Dashboard > Sprzęt > [Equipment Name]`
-- `/users` → `Dashboard > Użytkownicy`
+- `/equipment/[id]` → `Sprzęt > [Equipment Name]`
+- `/users` → opcjonalnie: `Użytkownicy`
 
 ### 4.3 Routing i ochrona tras
 
 **Struktura ścieżek**:
 
 ```
-/login                          # Publiczna
-/dashboard                      # Protected (all authenticated)
-/equipment                      # Protected (all authenticated)
-/equipment/[id]                 # Protected (all authenticated)
-/users                          # Protected (owner only)
-/404                            # Publiczna
+/                              # Redirect to /equipment
+/login                         # Publiczna
+/equipment                     # Protected (all authenticated)
+/equipment/[id]                # Protected (all authenticated)
+/users                         # Protected (owner only)
+/404                           # Publiczna
 ```
 
 **Server-side Protection** (Astro middleware):
 1. Sprawdza session (Supabase auth)
 2. Jeśli brak session + protected route → Redirect do `/login`
 3. Jeśli session + owner-only route → Sprawdza rolę
-4. Jeśli worker + owner-only route → Redirect do `/dashboard` + toast error "Brak uprawnień"
-5. Jeśli session + `/login` → Redirect do `/dashboard`
+4. Jeśli worker + owner-only route → Redirect do `/equipment` + toast error "Brak uprawnień"
+5. Jeśli session + `/login` → Redirect do `/equipment`
 
 **Client-side Navigation**:
 - Modals/Drawers nie zmieniają URL (local state)
@@ -592,9 +552,10 @@ const { isOwner } = useUserRole();
 - **Elementy**: Timestamp (relatywny/absolutny), service type badge + ikona, description, performer, actions dropdown
 
 #### StatsCard (Custom)
-- **Opis**: Karta statystyki na dashboardzie
+- **Opis**: Karta statystyki (obecnie nie używana - brak strony dashboard)
 - **Props**: `icon`, `value`, `label`, `isLoading`
 - **Layout**: Ikona + liczba (duża) + label
+- **Uwaga**: Komponent zachowany na przyszłość, jeśli dashboard zostanie dodany
 
 #### UserCard (Custom)
 - **Opis**: Karta użytkownika dla mobile
@@ -749,7 +710,7 @@ const { isOwner } = useUserRole();
 
 | UI Action | API Endpoint | Method | Response Handling |
 |-----------|--------------|--------|-------------------|
-| Login form submit | `/api/auth/login` | POST | Success: redirect `/dashboard`, Error: show alert |
+| Login form submit | `/api/auth/login` | POST | Success: redirect `/equipment`, Error: show alert |
 | Logout click | `/api/auth/logout` | POST | Success: redirect `/login`, clear cache |
 | Get current user | `/api/auth/me` | GET | Store in UserContext, use for role checks |
 
@@ -783,7 +744,9 @@ const { isOwner } = useUserRole();
 | Get user details | `/api/users/{id}` | GET | Display in table/card row |
 | Delete user (owner) | `/api/users/{id}` | DELETE | Toast success, update list, 409: toast "User has service entries", confirmation dialog |
 
-### 6.5 Dashboard Statistics
+### 6.5 Przyszłe rozszerzenia - Dashboard Statistics (opcjonalnie)
+
+Jeśli w przyszłości zostanie dodana strona dashboard, poniższe komponenty mogą być użyte:
 
 | UI Component | Data Source | Notes |
 |--------------|-------------|-------|
@@ -806,7 +769,7 @@ const { isOwner } = useUserRole();
 |----------|------------------|
 | Lista sprzętu/użytkowników ładuje | Skeleton loaders (tabela/karty), liczba rows = limit |
 | Szczegóły sprzętu ładują | Skeleton dla data card + timeline |
-| Statystyki dashboardu ładują | Skeleton dla każdej StatsCard |
+| Statystyki ładują (dashboard - jeśli zostanie dodany) | Skeleton dla każdej StatsCard |
 | API call z formularza | Button disabled + spinner, form fields disabled |
 | Zmiana strony paginacji | Loading spinner na pagination, dane niezmienione (nie znikają) |
 | Wyszukiwanie po ID | Spinner w search input |
@@ -831,7 +794,7 @@ const { isOwner } = useUserRole();
 | Brak wyników filtrowania | EmptyState: "Nie znaleziono sprzętu spełniającego kryteria." + CTA "Wyczyść filtry" |
 | Brak wpisów serwisowych dla sprzętu | EmptyState: "Brak wpisów serwisowych. Dodaj pierwszy wpis." + CTA "Dodaj wpis" |
 | Brak pracowników (oprócz owner) | EmptyState: "Brak pracowników. Dodaj pierwszego pracownika." + CTA "Dodaj pracownika" |
-| Brak ostatnich wpisów (dashboard) | EmptyState: ilustracja + "Brak ostatnich wpisów" (bez CTA) |
+| Brak ostatnich wpisów (przyszły dashboard) | EmptyState: ilustracja + "Brak ostatnich wpisów" (bez CTA) |
 
 ### 7.4 Edge Cases
 
@@ -1052,7 +1015,7 @@ interface UserContextValue {
 ### 12.1 E2E Tests (Playwright)
 
 **Minimalny test (PRD requirement)**:
-1. Login → dashboard
+1. Login → equipment list
 2. Add equipment → verify in list
 3. Equipment details → add service entry
 4. Verify entry in timeline
@@ -1153,6 +1116,6 @@ Architektura UI dla ServiceRegistry MVP została zaprojektowana z myślą o:
 4. **Performance**: SSR, partial hydration, optimistic updates, caching
 5. **Skalowalności**: Modular components, clear separation of concerns, extensible patterns
 
-Główne widoki (Login, Dashboard, Equipment List/Details, User Management) pokrywają wszystkie user stories z PRD. Komponenty są zaprojektowane jako reusable i accessible. Data flow wykorzystuje proven patterns (React Context, TanStack Query, react-hook-form). Error handling i loading states zapewniają smooth UX nawet przy błędach API czy wolnym połączeniu.
+Główne widoki (Login, Equipment List/Details, User Management) pokrywają wszystkie user stories z PRD. Komponenty są zaprojektowane jako reusable i accessible. Data flow wykorzystuje proven patterns (React Context, TanStack Query, react-hook-form). Error handling i loading states zapewniają smooth UX nawet przy błędach API czy wolnym połączeniu.
 
 Architektura jest gotowa do implementacji z jasno określonymi komponentami, data flow i integration points z API.

@@ -66,7 +66,7 @@ Dialogs/Drawers (Portal mounted):
 **Opis:** Sticky header na górze strony zawierający breadcrumbs, tytuł strony (Equipment ID + Name) oraz akcje kontekstowe.
 
 **Główne elementy:**
-- `Breadcrumbs` - nawigacja hierarchiczna (Dashboard > Sprzęt > [Equipment Name])
+- `Breadcrumbs` - nawigacja hierarchiczna (Sprzęt > [Equipment Name])
 - `div` - kontener na tytuł z Equipment ID (primary) i nazwą (secondary)
 - `div` - kontener na akcje (buttons)
 
@@ -94,7 +94,7 @@ interface PageHeaderProps {
 
 ### Breadcrumbs
 
-**Opis:** Komponent nawigacji hierarchicznej pokazujący ścieżkę od Dashboard do aktualnej strony.
+**Opis:** Komponent nawigacji hierarchicznej pokazujący ścieżkę od listy sprzętu do aktualnej strony.
 
 **Główne elementy:**
 - Lista linków rozdzielonych separatorami (np. `/` lub `>`)
