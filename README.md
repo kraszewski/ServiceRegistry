@@ -178,8 +178,16 @@ ServiceRegistry/
 │   ├── prd.md                  # Product Requirements Document
 │   ├── db-plan.md              # Plan struktury bazy danych
 │   ├── test-plan.md            # Plan testów
+│   ├── ci-cd-implementation-summary.md  # Implementacja CI/CD
 │   └── ...                     # Inne dokumenty techniczne
 ├── .cursor/                    # Reguły dla AI (Cursor IDE)
+├── .github/
+│   └── workflows/              # GitHub Actions workflows
+│       ├── pull-request.yml    # CI pipeline dla PR
+│       └── README.md           # Dokumentacja workflow
+├── e2e/                        # Testy E2E (Playwright)
+│   ├── homepage.spec.ts        # Przykładowy test
+│   └── README.md               # Dokumentacja testów E2E
 ├── public/                     # Publiczne assety (favicon, itp.)
 ├── src/
 │   ├── components/             # Komponenty UI (Astro i React)
@@ -208,7 +216,7 @@ ServiceRegistry/
 │   ├── types.ts                # Typy TypeScript (DTOs, Commands)
 │   └── config.ts               # Konfiguracja aplikacji
 ├── supabase/
-│   ├── migrations/             # Migracje bazy danych (8 plików)
+│   ├── migrations/             # Migracje bazy danych (10 plików)
 │   ├── seed.sql                # Dane startowe
 │   ├── config.toml             # Konfiguracja Supabase CLI
 │   ├── QUICKSTART.md           # Szybki start z bazą danych
@@ -216,7 +224,8 @@ ServiceRegistry/
 │   └── README.md               # Dokumentacja bazy danych
 ├── .env.example                # Przykładowa konfiguracja środowiska
 ├── astro.config.mjs            # Konfiguracja Astro
-├── vitest.config.ts            # Konfiguracja Vitest
+├── playwright.config.ts        # Konfiguracja Playwright (E2E)
+├── vitest.config.ts            # Konfiguracja Vitest (unit tests + coverage)
 ├── package.json                # Zależności i skrypty npm
 ├── tsconfig.json               # Konfiguracja TypeScript
 └── README.md                   # Ten plik
@@ -340,12 +349,20 @@ Więcej informacji: [.ai/test-plan.md](.ai/test-plan.md)
 
 ## 📚 Dokumentacja
 
+### Główne dokumenty
 - **[PRD](.ai/prd.md)** - Dokument wymagań produktu
 - **[Test Plan](.ai/test-plan.md)** - Kompleksowy plan testów
+- **[CI/CD Implementation](.ai/ci-cd-implementation-summary.md)** - Implementacja CI/CD pipeline
+
+### Baza danych
 - **[Database README](supabase/README.md)** - Dokumentacja bazy danych
 - **[Database Quickstart](supabase/QUICKSTART.md)** - Szybki start z bazą
 - **[SQL Examples](supabase/EXAMPLES.md)** - Przykłady zapytań SQL
 - **[Migrations README](supabase/migrations/README.md)** - Szczegóły migracji
+
+### CI/CD i Testy
+- **[Workflows README](.github/workflows/README.md)** - Dokumentacja GitHub Actions
+- **[E2E Tests README](e2e/README.md)** - Dokumentacja testów Playwright
 
 ## 🔧 Przydatne komendy
 

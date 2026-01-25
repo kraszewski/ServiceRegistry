@@ -6,8 +6,8 @@ Model: Aplikacja darmowa, open-source (MIT), single-tenant, tylko web.
 Role: Właściciel (pełne uprawnienia), Pracownik (dodawanie/edycja sprzętu i wpisów, bez usuwania, bez zarządzania kontami).  
 Stack: Astro 5 + React 19 + TypeScript 5 + Tailwind 4 + Shadcn/ui; Supabase (PostgreSQL, Auth, RLS); CI/CD GitHub Actions; hosting DigitalOcean (basic).  
 Tryb pracy: W pełni AI-driven development.  
-Testy: Minimum 1 test E2E (Playwright) generowany przez AI.  
-Scope uproszczony: Bez QR, bez Docker Compose, bez testów jednostkowych (Vitest) w MVP.
+Testy: ✅ Testy jednostkowe (Vitest 4.0.18) + Testy E2E (Playwright 1.49.0); CI/CD pipeline z automatyzacją testów.  
+Scope MVP: Pełna funkcjonalność CRUD, autoryzacja, testy, CI/CD. Bez: QR, Docker Compose, powiadomień, załączników.
 
 ## 2. Problem użytkownika
 Serwisy mają trudność w utrzymaniu pełnej historii serwisów wielu urządzeń; zapisują tylko poważne uwagi, tracąc kontekst i ciągłość informacji. Potrzebne jest proste narzędzie do kompletnego rejestrowania działań serwisowych dla każdego sprzętu.
@@ -46,16 +46,24 @@ Serwisy mają trudność w utrzymaniu pełnej historii serwisów wielu urządze�
   - users: select/insert/update/delete tylko owner.  
 
 3.6 CI/CD i testy  
-- GitHub Actions: build aplikacji, uruchomienie Playwright E2E.  
-- Test E2E minimalny: logowanie → dodanie sprzętu → weryfikacja na liście → karta sprzętu → dodanie wpisu serwisowego → weryfikacja wpisu.  
+- ✅ GitHub Actions workflow dla pull requestów: Lint → (Unit Tests + E2E Tests równolegle) → Status Comment  
+- ✅ Testy jednostkowe (Vitest): Schematy walidacji, logika biznesowa, coverage reporting  
+- ✅ Testy E2E (Playwright): Konfiguracja dla 3 przeglądarek (Chromium, Firefox, WebKit)  
+- 🔜 Test E2E minimalny (US-014): logowanie → dodanie sprzętu → weryfikacja na liście → karta sprzętu → dodanie wpisu serwisowego → weryfikacja wpisu  
+- ✅ Artefakty CI: Coverage reports (unit + e2e), raporty Playwright (7 dni retencji)  
+- ✅ Środowisko integration z sekretami Supabase dla testów  
 
 3.7 Dokumentacja  
-- README: instalacja, konfiguracja env, uruchomienie, testy, deployment basic.  
-- PRD: niniejszy dokument.  
+- ✅ README: instalacja, konfiguracja env, uruchomienie, testy, CI/CD, deployment basic  
+- ✅ PRD: niniejszy dokument  
+- ✅ Test Plan: `.ai/test-plan.md` - kompleksowy plan testów  
+- ✅ Workflows: `.github/workflows/README.md` - dokumentacja CI/CD  
+- ✅ E2E Tests: `e2e/README.md` - dokumentacja testów Playwright  
+- ✅ Database: `supabase/README.md` - dokumentacja bazy danych i migracji  
 
 ## 4. Granice produktu
-Wchodzi: Auth, role owner/worker, CRUD sprzętu, CRUD wpisów serwisowych, wyszukiwanie po ID, auto-ID, RLS, minimalny test E2E, CI/CD, basic deployment na DigitalOcean.  
-Nie wchodzi w MVP: Kody QR i wydruk etykiet, Docker Compose/self-host orchestration, testy jednostkowe Vitest, powiadomienia, pliki/załączniki, multi-tenancy, aplikacje mobilne, demo online, contributing guidelines.  
+Wchodzi w MVP: Auth, role owner/worker, CRUD sprzętu, CRUD wpisów serwisowych, wyszukiwanie po ID, auto-ID, RLS, testy jednostkowe (Vitest), infrastruktura E2E (Playwright), CI/CD pipeline, basic deployment na DigitalOcean.  
+Nie wchodzi w MVP: Kody QR i wydruk etykiet, Docker Compose/self-host orchestration, powiadomienia, pliki/załączniki, multi-tenancy, aplikacje mobilne, demo online, contributing guidelines.  
 Założenia: Single-tenant, web-only, brak trybu offline, brak powiadomień, brak plików.  
 
 ## 5. Historyjki użytkowników
@@ -113,10 +121,11 @@ Kryteria akceptacji: Worker nie widzi akcji usuwania sprzętu/wpisów ani zarzą
 
 US-014 Test E2E ścieżki krytycznej  
 Opis: Zweryfikowanie głównego flow użytkownika.  
-Kryteria akceptacji: Playwright test przechodzi: logowanie → dodanie sprzętu → weryfikacja na liście → karta sprzętu → dodanie wpisu serwisowego → weryfikacja wpisu.
+Kryteria akceptacji: Playwright test przechodzi: logowanie → dodanie sprzętu → weryfikacja na liście → karta sprzętu → dodanie wpisu serwisowego → weryfikacja wpisu.  
+Status: ✅ Infrastruktura gotowa (Playwright config, CI/CD), 🔜 Test do zaimplementowania
 
 ## 6. Metryki sukcesu
-- Funkcjonalne: Auth działa; role i uprawnienia działają; CRUD sprzętu i wpisów działa; wyszukiwanie po ID działa; auto-ID działa; historia serwisowa kompletna.  
-- Techniczne: RLS skonfigurowane i przetestowane; test E2E Playwright przechodzi; pipeline CI/CD (build + test) działa; aplikacja wdrożona na DigitalOcean (basic); README i PRD kompletne.  
-- Edukacyjne: Ukończone AI-driven development; praktyka promptowania, iteracji i debugowania kodu AI.  
-- Minimalna adopcja: Aplikacja działa stabilnie i mogłaby być użyta przez co najmniej jeden serwis w codziennej pracy.  
+- Funkcjonalne: ✅ Auth działa; ✅ role i uprawnienia działają; ✅ CRUD sprzętu i wpisów działa; ✅ wyszukiwanie po ID działa; ✅ auto-ID działa; ✅ historia serwisowa kompletna.  
+- Techniczne: ✅ RLS skonfigurowane i przetestowane; ✅ Testy jednostkowe zaimplementowane (24 testy); ✅ Infrastruktura E2E gotowa; 🔜 Test E2E krytycznej ścieżki; ✅ Pipeline CI/CD działa (lint + unit + e2e + status comment); 🔜 Aplikacja wdrożona na DigitalOcean (basic); ✅ README i PRD kompletne.  
+- Edukacyjne: ✅ Ukończone AI-driven development; ✅ praktyka promptowania, iteracji i debugowania kodu AI.  
+- Minimalna adopcja: 🔜 Aplikacja działa stabilnie i mogłaby być użyta przez co najmniej jeden serwis w codziennej pracy.  
