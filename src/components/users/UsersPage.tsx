@@ -160,8 +160,8 @@ export function UsersPage() {
     totalPages: 0,
   };
 
-  // Check if only owner exists (no workers)
-  const hasOnlyOwner = usersData.length === 1 && usersData[0]?.role === "owner";
+  // Show empty state only if there are NO users at all (which shouldn't happen)
+  const isEmpty = usersData.length === 0;
 
   return (
     <div className="container mx-auto px-4 sm:px-6 py-6 max-w-7xl">
@@ -169,7 +169,7 @@ export function UsersPage() {
 
       <div className="space-y-6">
         {/* Users List */}
-        {hasOnlyOwner ? (
+        {isEmpty ? (
           <UsersEmptyState onAddUser={openAddUserDialog} />
         ) : (
           <>

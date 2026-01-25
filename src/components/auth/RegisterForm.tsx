@@ -24,7 +24,7 @@ interface RegisterFormProps {
 /**
  * Registration form component with email/password/name fields
  * First registered user automatically becomes owner
- * After successful registration, user must log in manually
+ * After successful registration, user is automatically logged in
  */
 export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
   const [showPassword, setShowPassword] = useState(false);
@@ -74,9 +74,9 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
         return;
       }
 
-      // Success - redirect to login page with success message
+      // Success - user is now logged in, redirect to equipment page
       onSuccess?.();
-      window.location.href = "/login?registered=true";
+      window.location.href = "/equipment";
       
     } catch (error) {
       console.error("Registration error:", error);

@@ -7,14 +7,13 @@
  */
 
 import Layout from "@/layouts/Layout.astro";
-import { DEMO_MODE } from "@/config.ts";
 
 // Check authentication
 const supabase = Astro.locals.supabase;
 const { data: { user }, error } = await supabase.auth.getUser();
 
-// Redirect to login if not authenticated (skip in DEMO MODE)
-if (!DEMO_MODE && (error || !user)) {
+// Redirect to login if not authenticated
+if (error || !user) {
   return Astro.redirect("/login");
 }
 
@@ -26,8 +25,5 @@ const title = "Sprzęt (Test) - ServiceRegistry";
   <div class="container mx-auto px-4 py-6">
     <h1 class="text-2xl font-bold mb-4">Sprzęt - Test</h1>
     <p>Jeśli widzisz tę wiadomość, strona działa!</p>
-    {DEMO_MODE && (
-      <p class="mt-4 text-amber-600">🎭 DEMO MODE jest aktywny</p>
-    )}
   </div>
 </Layout>

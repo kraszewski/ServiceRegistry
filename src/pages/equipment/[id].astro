@@ -7,7 +7,6 @@
 
 import Layout from "@/layouts/Layout.astro";
 import { EquipmentDetailsAppWrapper } from "@/components/equipment/details/EquipmentDetailsAppWrapper";
-import { DEMO_MODE } from "@/config.ts";
 
 export const prerender = false;
 
@@ -22,8 +21,8 @@ if (!id) {
 const supabase = Astro.locals.supabase;
 const { data: { user }, error } = await supabase.auth.getUser();
 
-// Redirect to login if not authenticated (skip in DEMO MODE)
-if (!DEMO_MODE && (error || !user)) {
+// Redirect to login if not authenticated
+if (error || !user) {
   return Astro.redirect("/login");
 }
 

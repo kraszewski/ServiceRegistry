@@ -5,7 +5,6 @@
  * DELETE /api/users/{id} - Deletes a worker account (owner only)
  */
 import type { APIRoute } from "astro";
-import { DEMO_MODE } from "@/config";
 
 import { userIdSchema } from "../../../lib/schemas/user.schema";
 import { createUserService } from "../../../lib/services/user.service";
@@ -63,40 +62,20 @@ export const GET: APIRoute = async ({ locals, params }) => {
   }
 
   // 3. Check authorization (owner only)
-  // In DEMO_MODE, skip database RPC call and assume owner role
-  if (!DEMO_MODE) {
-    const { data: isOwner, error: roleError } = await supabase.rpc("is_owner");
+  const { data: isOwner, error: roleError } = await supabase.rpc("is_owner");
 
-    if (roleError || !isOwner) {
-      const errorResponse: ErrorResponse = {
-        error: "Only owner can perform this action",
-      };
-      return new Response(JSON.stringify(errorResponse), {
-        status: 403,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
+  if (roleError || !isOwner) {
+    const errorResponse: ErrorResponse = {
+      error: "Only owner can perform this action",
+    };
+    return new Response(JSON.stringify(errorResponse), {
+      status: 403,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   // 4. Fetch user details
   try {
-    // DEMO MODE: Return mock user details
-    if (DEMO_MODE) {
-      const mockUser: UserDTO = {
-        id,
-        email: "demo@example.com",
-        name: "Demo User",
-        role: "owner",
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-
-      return new Response(JSON.stringify(mockUser), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
     const userService = createUserService(supabase);
     const result = await userService.getUser(id);
 

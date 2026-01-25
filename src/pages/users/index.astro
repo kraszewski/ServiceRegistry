@@ -8,14 +8,13 @@
 
 import Layout from "@/layouts/Layout.astro";
 import UsersApp from "@/components/users/UsersApp.tsx";
-import { DEMO_MODE } from "@/config.ts";
 
 // Check authentication
 const supabase = Astro.locals.supabase;
 const { data: { user }, error } = await supabase.auth.getUser();
 
-// Redirect to login if not authenticated (skip in DEMO MODE)
-if (!DEMO_MODE && (error || !user)) {
+// Redirect to login if not authenticated
+if (error || !user) {
   return Astro.redirect("/login");
 }
 
@@ -30,8 +29,7 @@ if (user) {
     .single();
 
   // Check if user is owner
-  // In DEMO MODE, profile might not exist, so check user_metadata as fallback
-  userRole = profile?.role || user.user_metadata?.role || "worker";
+  userRole = profile?.role || "worker";
 }
 
 // Redirect to equipment page if not owner

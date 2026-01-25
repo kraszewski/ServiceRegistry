@@ -9,6 +9,18 @@ interface Props {
 }
 
 const { title = "ServiceRegistry", currentPage } = Astro.props;
+
+// Check if user is authenticated
+const accessToken = Astro.cookies.get("sb-access-token")?.value;
+const refreshToken = Astro.cookies.get("sb-refresh-token")?.value;
+const isAuthenticated = Boolean(accessToken && refreshToken);
+
+// Get user info if authenticated
+let userEmail: string | undefined;
+if (isAuthenticated) {
+  const { data: { user } } = await Astro.locals.supabase.auth.getUser();
+  userEmail = user?.email;
+}
 ---
 
 <!doctype html>
@@ -21,7 +33,7 @@ const { title = "ServiceRegistry", currentPage } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
-    <Navigation client:load currentPage={currentPage} />
+    <Navigation client:load currentPage={currentPage} isAuthenticated={isAuthenticated} userEmail={userEmail} />
     <slot />
     <Toaster client:load />
   </body>

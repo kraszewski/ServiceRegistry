@@ -86,13 +86,15 @@ export function ServiceEntryFormDrawer({
   // Reset form when entry changes or mode changes
   useEffect(() => {
     if (mode === "edit" && entry) {
+      // Convert ISO 8601 to datetime-local format (YYYY-MM-DDTHH:MM)
+      const timestamp = new Date(entry.service_timestamp).toISOString().slice(0, 16);
       form.reset({
-        service_timestamp: entry.service_timestamp,
+        service_timestamp: timestamp,
         service_type: entry.service_type,
         description: entry.description,
       });
     } else {
-      // For create mode, set current datetime
+      // For create mode, set current datetime in datetime-local format
       const now = new Date().toISOString().slice(0, 16);
       form.reset({
         service_timestamp: now,
@@ -103,7 +105,14 @@ export function ServiceEntryFormDrawer({
   }, [mode, entry, form]);
 
   const handleSubmit = async (data: ServiceEntryFormValues) => {
-    await onSubmit(data as CreateServiceEntryCommand);
+    // Convert datetime-local format to ISO 8601 if timestamp is provided
+    const command: CreateServiceEntryCommand = {
+      ...data,
+      service_timestamp: data.service_timestamp 
+        ? new Date(data.service_timestamp).toISOString()
+        : undefined,
+    };
+    await onSubmit(command);
   };
 
   return (
@@ -119,7 +128,7 @@ export function ServiceEntryFormDrawer({
         </SheetHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 py-6">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 p-4">
             {/* Service Timestamp */}
             <FormField
               control={form.control}

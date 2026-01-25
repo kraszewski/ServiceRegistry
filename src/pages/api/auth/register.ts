@@ -1,6 +1,7 @@
 /**
  * Register endpoint
  * Creates new user account (first user becomes owner, rest are workers)
+ * Automatically logs in the user after successful registration
  * POST /api/auth/register
  */
 
@@ -42,7 +43,7 @@ interface ErrorResponse {
   details?: string[];
 }
 
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request, locals, cookies }) => {
   const { supabase } = locals;
 
   try {
@@ -72,23 +73,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     const { email, password, name } = validation.data;
 
-    // 2. Check if this will be the first user (determines if they become owner)
-    const { count: existingUsersCount, error: countError } = await supabase
-      .from("profiles")
-      .select("*", { count: "exact", head: true });
-
-    if (countError) {
-      console.error("Error counting users:", countError);
-      const errorResponse: ErrorResponse = { error: "Failed to check existing users" };
-      return new Response(JSON.stringify(errorResponse), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    const isFirstUser = existingUsersCount === 0;
-
-    // 3. Create user in Supabase Auth with metadata
+    // 2. Create user in Supabase Auth with metadata
+    // Note: The database trigger will automatically:
+    //   - Create a profile for the new user
+    //   - Assign 'owner' role to first user, 'worker' to subsequent users
     const { data: authData, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
@@ -125,22 +113,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
       });
     }
 
-    // 4. If first user, upgrade to owner role
-    // Note: Profile was automatically created by trigger as 'worker'
-    if (isFirstUser) {
-      const { error: updateRoleError } = await supabase
-        .from("profiles")
-        .update({ role: "owner" })
-        .eq("id", authData.user.id);
-
-      if (updateRoleError) {
-        console.error("Error upgrading first user to owner:", updateRoleError);
-        // User was created but role upgrade failed - log but don't fail the request
-        // Admin can manually fix this
-      }
-    }
-
-    // 5. Get the created profile to return
+    // 3. Get the created profile to return
+    // Profile was automatically created by database trigger with correct role
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("id, name, role")
@@ -155,7 +129,31 @@ export const POST: APIRoute = async ({ request, locals }) => {
       });
     }
 
-    // 6. Return success response (user must still log in)
+    // 4. Log the user in by setting session cookies
+    // This provides better UX - user doesn't need to log in after registration
+    if (authData.session) {
+      const { session } = authData;
+      
+      // Access token (short-lived)
+      cookies.set("sb-access-token", session.access_token, {
+        path: "/",
+        httpOnly: true,
+        secure: import.meta.env.PROD,
+        sameSite: "lax",
+        maxAge: 60 * 60, // 1 hour
+      });
+
+      // Refresh token (long-lived)
+      cookies.set("sb-refresh-token", session.refresh_token, {
+        path: "/",
+        httpOnly: true,
+        secure: import.meta.env.PROD,
+        sameSite: "lax",
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+      });
+    }
+
+    // 5. Return success response (user is now logged in)
     const successResponse: RegisterSuccessResponse = {
       user: {
         id: profile.id,
