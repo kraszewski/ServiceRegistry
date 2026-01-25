@@ -19,10 +19,7 @@ export const createUserFormSchema = z.object({
     .min(1, "Hasło jest wymagane")
     .min(8, "Hasło musi mieć minimum 8 znaków")
     .max(72, "Hasło może mieć maksymalnie 72 znaki"),
-  name: z
-    .string()
-    .min(1, "Imię jest wymagane")
-    .max(100, "Imię może mieć maksymalnie 100 znaków"),
+  name: z.string().min(1, "Imię jest wymagane").max(100, "Imię może mieć maksymalnie 100 znaków"),
 });
 
 export type CreateUserFormInput = z.infer<typeof createUserFormSchema>;

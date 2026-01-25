@@ -3,8 +3,12 @@
  */
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import type { CreateServiceEntryCommand, UpdateServiceEntryCommand, ServiceEntryResponseDTO, DeleteResponse } from "@/types";
+import type {
+  CreateServiceEntryCommand,
+  UpdateServiceEntryCommand,
+  ServiceEntryResponseDTO,
+  DeleteResponse,
+} from "@/types";
 
 /**
  * Hook for creating a new service entry

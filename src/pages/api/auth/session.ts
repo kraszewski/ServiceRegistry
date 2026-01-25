@@ -24,7 +24,10 @@ export const GET: APIRoute = async ({ locals, cookies }) => {
     }
 
     // Get current user from session
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
 
     if (userError || !user) {
       return new Response(JSON.stringify({ error: "Invalid session" }), {

@@ -23,13 +23,13 @@ interface NavigationProps {
 export function Navigation({ currentPage, isAuthenticated: initialAuth, userEmail }: NavigationProps) {
   const { user, isOwner, isLoading } = useUser();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  
+
   const isAuthenticated = initialAuth || Boolean(user);
 
   const handleLogout = useCallback(async () => {
     try {
       setIsLoggingOut(true);
-      
+
       const response = await fetch("/api/auth/logout", {
         method: "POST",
         headers: {
@@ -42,7 +42,7 @@ export function Navigation({ currentPage, isAuthenticated: initialAuth, userEmai
       }
 
       toast.success("Wylogowano pomyślnie");
-      
+
       // Redirect to login page after successful logout
       window.location.href = "/";
     } catch (error) {
@@ -58,11 +58,7 @@ export function Navigation({ currentPage, isAuthenticated: initialAuth, userEmai
       <div className="container mx-auto px-4 sm:px-6 py-3 max-w-7xl">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
-            <Button
-              variant={currentPage === "equipment" ? "default" : "ghost"}
-              size="sm"
-              asChild
-            >
+            <Button variant={currentPage === "equipment" ? "default" : "ghost"} size="sm" asChild>
               <a href="/equipment" className="flex items-center gap-2">
                 <Package className="h-4 w-4" />
                 <span className="hidden sm:inline">Sprzęt</span>
@@ -70,11 +66,7 @@ export function Navigation({ currentPage, isAuthenticated: initialAuth, userEmai
             </Button>
 
             {isOwner && (
-              <Button
-                variant={currentPage === "users" ? "default" : "ghost"}
-                size="sm"
-                asChild
-              >
+              <Button variant={currentPage === "users" ? "default" : "ghost"} size="sm" asChild>
                 <a href="/users" className="flex items-center gap-2">
                   <Users className="h-4 w-4" />
                   <span className="hidden sm:inline">Użytkownicy</span>

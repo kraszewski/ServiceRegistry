@@ -214,15 +214,13 @@ export class ServiceEntryService {
     };
 
     // Remove undefined values
-    Object.keys(updateData).forEach((key) => {
-      if (updateData[key] === undefined) {
-        delete updateData[key];
-      }
-    });
+    const filteredUpdateData = Object.fromEntries(
+      Object.entries(updateData).filter(([, value]) => value !== undefined)
+    );
 
     const { data, error } = await this.supabase
       .from("service_entries")
-      .update(updateData)
+      .update(filteredUpdateData)
       .eq("id", id)
       .select()
       .single();

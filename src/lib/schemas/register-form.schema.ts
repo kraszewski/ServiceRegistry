@@ -20,13 +20,8 @@ export const registerFormSchema = z
       .min(1, "Hasło jest wymagane")
       .min(8, "Hasło musi mieć minimum 8 znaków")
       .max(72, "Hasło może mieć maksymalnie 72 znaki"),
-    confirmPassword: z
-      .string()
-      .min(1, "Potwierdzenie hasła jest wymagane"),
-    name: z
-      .string()
-      .min(1, "Imię i nazwisko jest wymagane")
-      .max(100, "Imię może mieć maksymalnie 100 znaków"),
+    confirmPassword: z.string().min(1, "Potwierdzenie hasła jest wymagane"),
+    name: z.string().min(1, "Imię i nazwisko jest wymagane").max(100, "Imię może mieć maksymalnie 100 znaków"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Hasła muszą być identyczne",

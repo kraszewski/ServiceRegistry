@@ -38,7 +38,7 @@ export function useUser(): UseUserResult {
     const fetchUserProfile = async () => {
       try {
         const response = await fetch("/api/auth/session");
-        
+
         if (!response.ok) {
           if (response.status === 401) {
             if (mounted) {
@@ -52,7 +52,7 @@ export function useUser(): UseUserResult {
         }
 
         const data = await response.json();
-        
+
         if (mounted) {
           setUser(data.user);
           setRole(data.user?.role || null);

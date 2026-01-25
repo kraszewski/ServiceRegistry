@@ -9,7 +9,7 @@ import type { APIRoute } from "astro";
 import { paginationSchema } from "../../../lib/schemas/pagination.schema";
 import { createUserSchema } from "../../../lib/schemas/user.schema";
 import { createUserService } from "../../../lib/services/user.service";
-import type { ErrorResponse, UserListItemDTO, UserListResponse } from "../../../types";
+import type { ErrorResponse } from "../../../types";
 
 export const prerender = false;
 

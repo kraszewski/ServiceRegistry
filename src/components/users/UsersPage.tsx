@@ -69,10 +69,6 @@ export function UsersPage() {
     setAddUserDialogOpen(true);
   };
 
-  const closeAddUserDialog = () => {
-    setAddUserDialogOpen(false);
-  };
-
   const openDeleteDialog = (user: UserListItemDTO) => {
     setDeleteDialog({ open: true, user });
   };
@@ -174,17 +170,9 @@ export function UsersPage() {
         ) : (
           <>
             {isMobile ? (
-              <UsersCardList
-                data={usersData}
-                currentUserId={currentUser?.id || ""}
-                onDelete={openDeleteDialog}
-              />
+              <UsersCardList data={usersData} currentUserId={currentUser?.id || ""} onDelete={openDeleteDialog} />
             ) : (
-              <UsersTable
-                data={usersData}
-                currentUserId={currentUser?.id || ""}
-                onDelete={openDeleteDialog}
-              />
+              <UsersTable data={usersData} currentUserId={currentUser?.id || ""} onDelete={openDeleteDialog} />
             )}
 
             {/* Pagination */}
@@ -203,11 +191,7 @@ export function UsersPage() {
       </div>
 
       {/* Dialogs */}
-      <AddUserDialog
-        open={addUserDialogOpen}
-        onOpenChange={setAddUserDialogOpen}
-        onSuccess={handleAddUserSuccess}
-      />
+      <AddUserDialog open={addUserDialogOpen} onOpenChange={setAddUserDialogOpen} onSuccess={handleAddUserSuccess} />
 
       <DeleteUserAlertDialog
         user={deleteDialog.user}

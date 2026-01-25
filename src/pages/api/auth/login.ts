@@ -100,7 +100,7 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
 
     // 4. Set HttpOnly cookies with session tokens
     const { session } = authData;
-    
+
     // Access token (short-lived)
     cookies.set("sb-access-token", session.access_token, {
       path: "/",
@@ -123,7 +123,7 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
     const successResponse: LoginSuccessResponse = {
       user: {
         id: profile.id,
-        email: authData.user.email!,
+        email: authData.user.email ?? "",
         name: profile.name,
         role: profile.role,
       },

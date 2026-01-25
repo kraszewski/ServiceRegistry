@@ -6,13 +6,7 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -101,9 +95,7 @@ export function AddUserDialog({ open, onOpenChange, onSuccess }: AddUserDialogPr
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Dodaj Pracownika</DialogTitle>
-          <DialogDescription>
-            Utwórz nowe konto pracownika. Wszystkie pola są wymagane.
-          </DialogDescription>
+          <DialogDescription>Utwórz nowe konto pracownika. Wszystkie pola są wymagane.</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -190,12 +182,7 @@ export function AddUserDialog({ open, onOpenChange, onSuccess }: AddUserDialogPr
 
             {/* Form actions */}
             <div className="flex justify-end gap-3 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-                disabled={isSubmitting}
-              >
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
                 Anuluj
               </Button>
               <Button type="submit" disabled={isSubmitting}>

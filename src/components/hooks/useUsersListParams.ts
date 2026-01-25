@@ -48,9 +48,9 @@ export function useUsersListParams() {
     const handleUrlChange = () => {
       const searchParams = new URLSearchParams(window.location.search);
       const newParams = parseParams(searchParams);
-      
+
       // Only update if params actually changed (deep comparison via JSON)
-      setParamsState(prevParams => {
+      setParamsState((prevParams) => {
         if (JSON.stringify(prevParams) === JSON.stringify(newParams)) {
           return prevParams; // Return same object to prevent re-render
         }
@@ -89,9 +89,7 @@ export function useUsersListParams() {
 
     // Update URL without reload
     const queryString = searchParams.toString();
-    const newUrl = queryString 
-      ? `${window.location.pathname}?${queryString}` 
-      : window.location.pathname;
+    const newUrl = queryString ? `${window.location.pathname}?${queryString}` : window.location.pathname;
     window.history.pushState({}, "", newUrl);
 
     // Trigger custom event to notify components

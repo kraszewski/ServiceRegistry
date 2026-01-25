@@ -11,15 +11,15 @@ export default defineConfig({
   output: "server",
   integrations: [
     react({
-      include: ['**/react/*', '**/components/**/*.tsx', '**/components/**/*.jsx'],
+      include: ["**/react/*", "**/components/**/*.tsx", "**/components/**/*.jsx"],
     }),
-    sitemap()
+    sitemap(),
   ],
   server: { port: 3000 },
   vite: {
     plugins: [tailwindcss()],
     ssr: {
-      noExternal: ['@radix-ui/*'],
+      noExternal: ["@radix-ui/*"],
     },
   },
   adapter: node({

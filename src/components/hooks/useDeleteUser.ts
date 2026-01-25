@@ -12,7 +12,7 @@ import { deleteUser } from "@/lib/api/users";
  */
 export function useDeleteUser() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (userId: string) => deleteUser(userId),
     onSuccess: () => {

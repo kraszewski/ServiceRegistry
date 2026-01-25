@@ -10,7 +10,10 @@ import Layout from "@/layouts/Layout.astro";
 
 // Check authentication
 const supabase = Astro.locals.supabase;
-const { data: { user }, error } = await supabase.auth.getUser();
+const {
+  data: { user },
+  error,
+} = await supabase.auth.getUser();
 
 // Redirect to login if not authenticated
 if (error || !user) {

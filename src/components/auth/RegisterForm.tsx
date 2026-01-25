@@ -64,12 +64,12 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
       if (!response.ok) {
         // Handle error response
         const errorMessage = responseData.error || "Wystąpił błąd podczas rejestracji";
-        
+
         form.setError("root", {
           type: "manual",
           message: errorMessage,
         });
-        
+
         onError?.(errorMessage);
         return;
       }
@@ -77,16 +77,15 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
       // Success - user is now logged in, redirect to equipment page
       onSuccess?.();
       window.location.href = "/equipment";
-      
     } catch (error) {
       console.error("Registration error:", error);
       const errorMessage = error instanceof Error ? error.message : "Wystąpił błąd podczas rejestracji";
-      
+
       form.setError("root", {
         type: "manual",
         message: errorMessage,
       });
-      
+
       onError?.(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -97,9 +96,7 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
     <Card className="w-full max-w-md">
       <CardHeader>
         <CardTitle className="text-2xl">Rejestracja</CardTitle>
-        <CardDescription>
-          Utwórz nowe konto, aby korzystać z systemu
-        </CardDescription>
+        <CardDescription>Utwórz nowe konto, aby korzystać z systemu</CardDescription>
       </CardHeader>
 
       <CardContent>
@@ -227,9 +224,7 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
 
             {/* Root error message */}
             {form.formState.errors.root && (
-              <div className="text-sm font-medium text-destructive">
-                {form.formState.errors.root.message}
-              </div>
+              <div className="text-sm font-medium text-destructive">{form.formState.errors.root.message}</div>
             )}
 
             {/* Submit button */}

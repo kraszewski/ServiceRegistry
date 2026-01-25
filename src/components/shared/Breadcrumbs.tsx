@@ -30,16 +30,11 @@ export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
             {index > 0 && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
 
             {item.href && !isLast ? (
-              <a
-                href={item.href}
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
+              <a href={item.href} className="text-muted-foreground hover:text-foreground transition-colors">
                 {item.label}
               </a>
             ) : (
-              <span className={cn(isLast ? "text-foreground font-medium" : "text-muted-foreground")}>
-                {item.label}
-              </span>
+              <span className={cn(isLast ? "text-foreground font-medium" : "text-muted-foreground")}>{item.label}</span>
             )}
           </div>
         );

@@ -59,12 +59,12 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
       if (!response.ok) {
         // Handle error response
         const errorMessage = responseData.error || "Wystąpił błąd podczas logowania";
-        
+
         form.setError("root", {
           type: "manual",
           message: errorMessage,
         });
-        
+
         onError?.(errorMessage);
         return;
       }
@@ -72,16 +72,15 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
       // Success - cookies are set by server, redirect to equipment list
       onSuccess?.();
       window.location.href = "/equipment";
-      
     } catch (error) {
       console.error("Login error:", error);
       const errorMessage = error instanceof Error ? error.message : "Wystąpił błąd podczas logowania";
-      
+
       form.setError("root", {
         type: "manual",
         message: errorMessage,
       });
-      
+
       onError?.(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -92,9 +91,7 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
     <Card className="w-full max-w-md">
       <CardHeader>
         <CardTitle className="text-2xl">Logowanie</CardTitle>
-        <CardDescription>
-          Wprowadź swoje dane, aby zalogować się do systemu
-        </CardDescription>
+        <CardDescription>Wprowadź swoje dane, aby zalogować się do systemu</CardDescription>
       </CardHeader>
 
       <CardContent>
@@ -162,9 +159,7 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
 
             {/* Root error message */}
             {form.formState.errors.root && (
-              <div className="text-sm font-medium text-destructive">
-                {form.formState.errors.root.message}
-              </div>
+              <div className="text-sm font-medium text-destructive">{form.formState.errors.root.message}</div>
             )}
 
             {/* Submit button */}

@@ -8,7 +8,7 @@ import type { APIRoute } from "astro";
 
 import { userIdSchema } from "../../../lib/schemas/user.schema";
 import { createUserService } from "../../../lib/services/user.service";
-import type { ErrorResponse, UserDTO } from "../../../types";
+import type { ErrorResponse } from "../../../types";
 
 export const prerender = false;
 

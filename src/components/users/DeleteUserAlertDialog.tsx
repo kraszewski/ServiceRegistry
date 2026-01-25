@@ -26,13 +26,7 @@ interface DeleteUserAlertDialogProps {
 /**
  * Confirmation dialog for deleting user
  */
-export function DeleteUserAlertDialog({
-  user,
-  open,
-  onOpenChange,
-  onConfirm,
-  isDeleting,
-}: DeleteUserAlertDialogProps) {
+export function DeleteUserAlertDialog({ user, open, onOpenChange, onConfirm, isDeleting }: DeleteUserAlertDialogProps) {
   if (!user) {
     return null;
   }

@@ -41,15 +41,14 @@ export function DeleteEquipmentAlertDialog({
           <AlertDialogTitle>Usunąć sprzęt?</AlertDialogTitle>
           <AlertDialogDescription className="space-y-2">
             <p>
-              Ta akcja jest <strong>nieodwracalna</strong>. Sprzęt <strong>{equipmentName}</strong> zostanie
-              trwale usunięty z bazy danych.
+              Ta akcja jest <strong>nieodwracalna</strong>. Sprzęt <strong>{equipmentName}</strong> zostanie trwale
+              usunięty z bazy danych.
             </p>
             {entriesCount > 0 && (
               <p className="text-destructive font-medium">
                 Uwaga: Usunięcie sprzętu spowoduje również usunięcie{" "}
                 <strong>
-                  {entriesCount} {entriesCount === 1 ? "wpisu" : entriesCount < 5 ? "wpisów" : "wpisów"}{" "}
-                  serwisowego
+                  {entriesCount} {entriesCount === 1 ? "wpisu" : entriesCount < 5 ? "wpisów" : "wpisów"} serwisowego
                   {entriesCount === 1 ? "" : "wych"}
                 </strong>
                 .

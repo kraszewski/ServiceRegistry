@@ -4,7 +4,7 @@
  */
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { CreateUserCommand, UserListItemDTO } from "@/types";
+import type { CreateUserCommand } from "@/types";
 import { createUser } from "@/lib/api/users";
 
 /**
@@ -13,7 +13,7 @@ import { createUser } from "@/lib/api/users";
  */
 export function useCreateUser() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (command: CreateUserCommand) => createUser(command),
     onSuccess: () => {

@@ -18,16 +18,8 @@ interface EquipmentDetailsPageHeaderProps {
 /**
  * Page header for equipment details with breadcrumbs and actions
  */
-export function EquipmentDetailsPageHeader({
-  equipment,
-  isOwner,
-  onEdit,
-  onDelete,
-}: EquipmentDetailsPageHeaderProps) {
-  const breadcrumbItems: BreadcrumbItem[] = [
-    { label: "Sprzęt", href: "/equipment" },
-    { label: equipment.name },
-  ];
+export function EquipmentDetailsPageHeader({ equipment, isOwner, onEdit, onDelete }: EquipmentDetailsPageHeaderProps) {
+  const breadcrumbItems: BreadcrumbItem[] = [{ label: "Sprzęt", href: "/equipment" }, { label: equipment.name }];
 
   return (
     <header className="sticky top-0 z-10 bg-background border-b mb-6 -mx-4 px-4 py-4 sm:-mx-6 sm:px-6">

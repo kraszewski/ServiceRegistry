@@ -22,10 +22,7 @@ const registerSchema = z.object({
     .min(1, "Hasło jest wymagane")
     .min(8, "Hasło musi mieć minimum 8 znaków")
     .max(72, "Hasło może mieć maksymalnie 72 znaki"),
-  name: z
-    .string()
-    .min(1, "Imię i nazwisko jest wymagane")
-    .max(100, "Imię i nazwisko może mieć maksymalnie 100 znaków"),
+  name: z.string().min(1, "Imię i nazwisko jest wymagane").max(100, "Imię i nazwisko może mieć maksymalnie 100 znaków"),
 });
 
 // Response types
@@ -133,7 +130,7 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
     // This provides better UX - user doesn't need to log in after registration
     if (authData.session) {
       const { session } = authData;
-      
+
       // Access token (short-lived)
       cookies.set("sb-access-token", session.access_token, {
         path: "/",
@@ -157,7 +154,7 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
     const successResponse: RegisterSuccessResponse = {
       user: {
         id: profile.id,
-        email: authData.user.email!,
+        email: authData.user.email ?? "",
         name: profile.name,
         role: profile.role,
       },

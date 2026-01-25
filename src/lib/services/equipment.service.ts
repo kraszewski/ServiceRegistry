@@ -224,13 +224,16 @@ export class EquipmentService {
     };
 
     // Remove undefined values
-    Object.keys(updateData).forEach((key) => {
-      if (updateData[key] === undefined) {
-        delete updateData[key];
-      }
-    });
+    const filteredUpdateData = Object.fromEntries(
+      Object.entries(updateData).filter(([, value]) => value !== undefined)
+    );
 
-    const { data, error } = await this.supabase.from("equipment").update(updateData).eq("id", id).select().single();
+    const { data, error } = await this.supabase
+      .from("equipment")
+      .update(filteredUpdateData)
+      .eq("id", id)
+      .select()
+      .single();
 
     if (error) {
       // Check for unique constraint violation on serial_number

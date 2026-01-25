@@ -59,11 +59,7 @@ export function EquipmentDataCard({ equipment }: EquipmentDataCardProps) {
           <DataField label="Numer seryjny" value={equipment.serial_number} />
 
           {/* Optional Information */}
-          <DataField
-            label="Data zakupu"
-            value={formatDate(equipment.purchase_date)}
-            emptyText="Nie podano"
-          />
+          <DataField label="Data zakupu" value={formatDate(equipment.purchase_date)} emptyText="Nie podano" />
           <DataField label="Lokalizacja" value={equipment.location} emptyText="Nie podano" />
 
           {/* Description - full width */}
@@ -75,22 +71,10 @@ export function EquipmentDataCard({ equipment }: EquipmentDataCardProps) {
           <div className="md:col-span-2 pt-6 mt-6 border-t space-y-4">
             <h4 className="text-sm font-semibold text-foreground">Metadata</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <DataField
-                label="Utworzono przez"
-                value={equipment.created_by.name}
-              />
-              <DataField
-                label="Data utworzenia"
-                value={formatDateTime(equipment.created_at)}
-              />
-              <DataField
-                label="Zmodyfikowano przez"
-                value={equipment.updated_by.name}
-              />
-              <DataField
-                label="Data modyfikacji"
-                value={formatDateTime(equipment.updated_at)}
-              />
+              <DataField label="Utworzono przez" value={equipment.created_by.name} />
+              <DataField label="Data utworzenia" value={formatDateTime(equipment.created_at)} />
+              <DataField label="Zmodyfikowano przez" value={equipment.updated_by.name} />
+              <DataField label="Data modyfikacji" value={formatDateTime(equipment.updated_at)} />
             </div>
           </div>
         </dl>

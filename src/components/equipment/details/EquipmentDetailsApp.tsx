@@ -37,16 +37,9 @@ export function EquipmentDetailsApp({ equipmentId }: EquipmentDetailsAppProps) {
   const [page] = useState(1);
 
   // Queries
-  const {
-    data: equipment,
-    isLoading: isLoadingEquipment,
-    error: equipmentError,
-  } = useEquipmentDetails(equipmentId);
+  const { data: equipment, isLoading: isLoadingEquipment, error: equipmentError } = useEquipmentDetails(equipmentId);
 
-  const {
-    data: entriesData,
-    isLoading: isLoadingEntries,
-  } = useServiceEntries(equipmentId, { page, limit: 50 });
+  const { data: entriesData, isLoading: isLoadingEntries } = useServiceEntries(equipmentId, { page, limit: 50 });
 
   const entries = entriesData?.data ?? [];
 
@@ -83,8 +76,10 @@ export function EquipmentDetailsApp({ equipmentId }: EquipmentDetailsAppProps) {
       setDialogState((prev) => ({ ...prev, deleteEquipmentDialogOpen: false }));
       // Redirect to equipment list
       window.location.href = "/equipment";
-    } catch (error: any) {
-      toast.error(error?.error || "Nie udało się usunąć sprzętu");
+    } catch (error: unknown) {
+      const errorMessage =
+        error && typeof error === "object" && "error" in error ? String(error.error) : "Nie udało się usunąć sprzętu";
+      toast.error(errorMessage);
     }
   };
 
@@ -136,8 +131,10 @@ export function EquipmentDetailsApp({ equipmentId }: EquipmentDetailsAppProps) {
         serviceEntryDrawerOpen: false,
         serviceEntryEditData: undefined,
       }));
-    } catch (error: any) {
-      toast.error(error?.error || "Nie udało się zapisać wpisu");
+    } catch (error: unknown) {
+      const errorMessage =
+        error && typeof error === "object" && "error" in error ? String(error.error) : "Nie udało się zapisać wpisu";
+      toast.error(errorMessage);
     }
   };
 
@@ -155,8 +152,10 @@ export function EquipmentDetailsApp({ equipmentId }: EquipmentDetailsAppProps) {
         deleteEntryDialogOpen: false,
         deleteEntryId: undefined,
       }));
-    } catch (error: any) {
-      toast.error(error?.error || "Nie udało się usunąć wpisu");
+    } catch (error: unknown) {
+      const errorMessage =
+        error && typeof error === "object" && "error" in error ? String(error.error) : "Nie udało się usunąć wpisu";
+      toast.error(errorMessage);
     }
   };
 
@@ -200,12 +199,7 @@ export function EquipmentDetailsApp({ equipmentId }: EquipmentDetailsAppProps) {
 
   return (
     <div className="container mx-auto p-4 sm:p-6">
-      <EquipmentDetailsPageHeader
-        equipment={equipment}
-        isOwner={isOwner}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
+      <EquipmentDetailsPageHeader equipment={equipment} isOwner={isOwner} onEdit={handleEdit} onDelete={handleDelete} />
 
       <div className="space-y-8">
         <EquipmentDataCard equipment={equipment} />
@@ -229,7 +223,7 @@ export function EquipmentDetailsApp({ equipmentId }: EquipmentDetailsAppProps) {
         onOpenChange={(open) => setDialogState((prev) => ({ ...prev, equipmentFormOpen: open }))}
         mode="edit"
         equipment={equipment}
-        onSuccess={(updatedEquipment) => {
+        onSuccess={() => {
           toast.success("Sprzęt zaktualizowany pomyślnie");
           setDialogState((prev) => ({ ...prev, equipmentFormOpen: false }));
           // Refresh equipment data

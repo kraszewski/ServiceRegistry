@@ -18,7 +18,9 @@ const isAuthenticated = Boolean(accessToken && refreshToken);
 // Get user info if authenticated
 let userEmail: string | undefined;
 if (isAuthenticated) {
-  const { data: { user } } = await Astro.locals.supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await Astro.locals.supabase.auth.getUser();
   userEmail = user?.email;
 }
 ---

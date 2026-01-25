@@ -23,7 +23,6 @@ interface ServiceHistorySectionProps {
  * Section displaying service history with timeline
  */
 export function ServiceHistorySection({
-  equipmentId,
   entries,
   isLoading,
   isOwner,

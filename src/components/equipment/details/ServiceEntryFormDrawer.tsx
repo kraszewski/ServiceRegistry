@@ -7,29 +7,9 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -67,7 +47,6 @@ interface ServiceEntryFormDrawerProps {
 export function ServiceEntryFormDrawer({
   open,
   onOpenChange,
-  equipmentId,
   mode,
   entry,
   currentUser,
@@ -108,9 +87,7 @@ export function ServiceEntryFormDrawer({
     // Convert datetime-local format to ISO 8601 if timestamp is provided
     const command: CreateServiceEntryCommand = {
       ...data,
-      service_timestamp: data.service_timestamp 
-        ? new Date(data.service_timestamp).toISOString()
-        : undefined,
+      service_timestamp: data.service_timestamp ? new Date(data.service_timestamp).toISOString() : undefined,
     };
     await onSubmit(command);
   };
@@ -137,11 +114,7 @@ export function ServiceEntryFormDrawer({
                 <FormItem>
                   <FormLabel>Data i godzina serwisu</FormLabel>
                   <FormControl>
-                    <Input
-                      type="datetime-local"
-                      {...field}
-                      disabled={isSubmitting}
-                    />
+                    <Input type="datetime-local" {...field} disabled={isSubmitting} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -155,11 +128,7 @@ export function ServiceEntryFormDrawer({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Typ operacji *</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    disabled={isSubmitting}
-                  >
+                  <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Wybierz typ operacji" />
@@ -201,9 +170,7 @@ export function ServiceEntryFormDrawer({
                     />
                   </FormControl>
                   <FormMessage />
-                  <p className="text-xs text-muted-foreground">
-                    {field.value?.length || 0} / 2000 znaków
-                  </p>
+                  <p className="text-xs text-muted-foreground">{field.value?.length || 0} / 2000 znaków</p>
                 </FormItem>
               )}
             />
@@ -224,12 +191,7 @@ export function ServiceEntryFormDrawer({
             </FormItem>
 
             <SheetFooter className="gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-                disabled={isSubmitting}
-              >
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
                 Anuluj
               </Button>
               <Button type="submit" disabled={isSubmitting}>

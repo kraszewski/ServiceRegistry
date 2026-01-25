@@ -3,7 +3,7 @@
  * Synchronizes filter/sort/pagination state with URL query string
  */
 
-import { useCallback, useMemo, useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import type { EquipmentListParams } from "@/types";
 
 /**
@@ -91,9 +91,9 @@ export function useEquipmentListParams() {
     const handleUrlChange = () => {
       const searchParams = new URLSearchParams(window.location.search);
       const newParams = parseParams(searchParams);
-      
+
       // Only update if params actually changed (deep comparison via JSON)
-      setParamsState(prevParams => {
+      setParamsState((prevParams) => {
         if (JSON.stringify(prevParams) === JSON.stringify(newParams)) {
           return prevParams; // Return same object to prevent re-render
         }
@@ -127,11 +127,11 @@ export function useEquipmentListParams() {
     searchParams.set("limit", String(updated.limit));
 
     // Include sort and order if different from defaults
-    if (updated.sort !== DEFAULT_PARAMS.sort) {
-      searchParams.set("sort", updated.sort!);
+    if (updated.sort && updated.sort !== DEFAULT_PARAMS.sort) {
+      searchParams.set("sort", updated.sort);
     }
-    if (updated.order !== DEFAULT_PARAMS.order) {
-      searchParams.set("order", updated.order!);
+    if (updated.order && updated.order !== DEFAULT_PARAMS.order) {
+      searchParams.set("order", updated.order);
     }
 
     // Include category if set

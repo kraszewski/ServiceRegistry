@@ -16,11 +16,11 @@ export function SimpleDialog({ open, onOpenChange, children }: SimpleDialogProps
   // Close on Escape key
   useEffect(() => {
     if (!open) return;
-    
+
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") onOpenChange(false);
     };
-    
+
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
   }, [open, onOpenChange]);
@@ -43,14 +43,20 @@ export function SimpleDialog({ open, onOpenChange, children }: SimpleDialogProps
     <div
       className="fixed inset-0 z-50 flex items-center justify-center"
       onClick={() => onOpenChange(false)}
+      onKeyDown={(e) => e.key === "Enter" && onOpenChange(false)}
+      role="button"
+      tabIndex={0}
     >
       {/* Backdrop */}
       <div className="fixed inset-0 bg-black/50" />
-      
+
       {/* Dialog */}
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
       <div
         className="relative z-50 bg-background rounded-lg shadow-lg border max-w-2xl w-full max-h-[90vh] overflow-y-auto mx-4"
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
       >
         {/* Close button */}
         <button
@@ -60,7 +66,7 @@ export function SimpleDialog({ open, onOpenChange, children }: SimpleDialogProps
           <X className="h-4 w-4" />
           <span className="sr-only">Close</span>
         </button>
-        
+
         {children}
       </div>
     </div>
