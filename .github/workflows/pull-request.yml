@@ -61,8 +61,8 @@ jobs:
     needs: lint
     environment: integration
     env:
-      PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
-      PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
+      SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
+      SUPABASE_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
       PUBLIC_BASE_URL: http://localhost:4321
     steps:
       - name: Checkout code
