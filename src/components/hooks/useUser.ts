@@ -24,7 +24,7 @@ export interface UseUserResult {
 /**
  * Hook for accessing current user and role information
  * Fetches user profile from API based on session
- * Works with DEMO_MODE - returns mock user when enabled
+ * Returns null user when not authenticated (401)
  */
 export function useUser(): UseUserResult {
   const [user, setUser] = useState<User | null>(null);

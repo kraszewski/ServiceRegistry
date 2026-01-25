@@ -34,7 +34,7 @@ Formularz logowania użytkownika z polami:
 />
 ```
 
-**Uwaga:** Backend nie jest jeszcze zaimplementowany. Komponent obecnie loguje dane do konsoli.
+**Implementacja:** Zintegrowany z `POST /api/auth/login`. Po udanym logowaniu przekierowuje do `/equipment`.
 
 ### RegisterForm
 
@@ -58,7 +58,10 @@ Formularz rejestracji nowego użytkownika z polami:
 />
 ```
 
-**Uwaga:** Backend nie jest jeszcze zaimplementowany. Komponent obecnie loguje dane do konsoli.
+**Implementacja:** Zintegrowany z `POST /api/auth/register`. 
+- Pierwszy użytkownik otrzymuje rolę `owner`
+- Kolejni użytkownicy otrzymują rolę `worker`
+- Po rejestracji przekierowuje do `/login` z komunikatem sukcesu
 
 ## Walidacja
 
@@ -88,9 +91,9 @@ Komponenty używają:
 
 ## TODO - Backend
 
-Następujące endpointy API wymagają implementacji:
+Następujące endpointy API zostały zaimplementowane:
 
-### POST /api/auth/login
+### ✅ POST /api/auth/login
 **Request:**
 ```json
 {
@@ -111,12 +114,14 @@ Następujące endpointy API wymagają implementacji:
 }
 ```
 
+**Cookies:** Ustawia HttpOnly cookies `sb-access-token` i `sb-refresh-token`
+
 **Errors:**
 - `400` - Błąd walidacji
 - `401` - Nieprawidłowe dane logowania
 - `500` - Błąd serwera
 
-### POST /api/auth/register
+### ✅ POST /api/auth/register
 **Request:**
 ```json
 {
@@ -133,23 +138,48 @@ Następujące endpointy API wymagają implementacji:
     "id": "uuid",
     "email": "user@example.com",
     "name": "Jan Kowalski",
-    "role": "worker"
+    "role": "owner" | "worker"
   }
 }
 ```
+
+**Uwagi:**
+- Pierwszy użytkownik otrzymuje rolę `owner`
+- Kolejni użytkownicy otrzymują rolę `worker`
+- Nie ustawia sesji - użytkownik musi się zalogować
 
 **Errors:**
 - `400` - Błąd walidacji
 - `409` - Email już istnieje
 - `500` - Błąd serwera
 
-### POST /api/auth/logout
+### ✅ POST /api/auth/logout
 **Response (200):**
 ```json
 {
   "message": "Logged out successfully"
 }
 ```
+
+**Efekty:** Czyści cookies `sb-access-token` i `sb-refresh-token`
+
+### ✅ GET /api/auth/session
+**Response (200):**
+```json
+{
+  "user": {
+    "id": "uuid",
+    "email": "user@example.com",
+    "name": "Jan Kowalski",
+    "role": "owner" | "worker"
+  }
+}
+```
+
+**Errors:**
+- `401` - Brak sesji lub sesja nieważna
+- `404` - Profil nie znaleziony
+- `500` - Błąd serwera
 
 ## Bezpieczeństwo
 

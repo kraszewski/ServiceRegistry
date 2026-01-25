@@ -1,6 +1,7 @@
 /**
  * LoginForm Component
  * Form for user authentication with email and password
+ * Integrates with Supabase Auth via /api/auth/login
  */
 
 import { useState } from "react";
@@ -22,7 +23,7 @@ interface LoginFormProps {
 
 /**
  * Login form component with email/password authentication
- * Note: This is UI-only component, backend implementation pending
+ * On successful login, redirects to /equipment
  */
 export function LoginForm({ onSuccess, onError }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
@@ -41,14 +42,36 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
     setIsSubmitting(true);
 
     try {
-      // TODO: Backend implementation - POST /api/auth/login
-      console.log("Login attempt:", { email: data.email });
-      
-      // Placeholder - simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // TODO: Handle actual authentication
+      // Call login endpoint
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+        }),
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        // Handle error response
+        const errorMessage = responseData.error || "Wystąpił błąd podczas logowania";
+        
+        form.setError("root", {
+          type: "manual",
+          message: errorMessage,
+        });
+        
+        onError?.(errorMessage);
+        return;
+      }
+
+      // Success - cookies are set by server, redirect to equipment list
       onSuccess?.();
+      window.location.href = "/equipment";
       
     } catch (error) {
       console.error("Login error:", error);

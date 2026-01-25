@@ -1,6 +1,7 @@
 /**
  * RegisterForm Component
  * Form for user registration with email, password, and name
+ * Integrates with Supabase Auth via /api/auth/register
  */
 
 import { useState } from "react";
@@ -22,7 +23,8 @@ interface RegisterFormProps {
 
 /**
  * Registration form component with email/password/name fields
- * Note: This is UI-only component, backend implementation pending
+ * First registered user automatically becomes owner
+ * After successful registration, user must log in manually
  */
 export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
   const [showPassword, setShowPassword] = useState(false);
@@ -44,17 +46,37 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
     setIsSubmitting(true);
 
     try {
-      // TODO: Backend implementation - POST /api/auth/register
-      console.log("Registration attempt:", { 
-        email: data.email, 
-        name: data.name 
+      // Call register endpoint
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+          name: data.name,
+        }),
       });
-      
-      // Placeholder - simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // TODO: Handle actual registration
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        // Handle error response
+        const errorMessage = responseData.error || "Wystąpił błąd podczas rejestracji";
+        
+        form.setError("root", {
+          type: "manual",
+          message: errorMessage,
+        });
+        
+        onError?.(errorMessage);
+        return;
+      }
+
+      // Success - redirect to login page with success message
       onSuccess?.();
+      window.location.href = "/login?registered=true";
       
     } catch (error) {
       console.error("Registration error:", error);

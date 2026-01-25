@@ -5,7 +5,6 @@
  */
 
 import type { APIRoute } from "astro";
-import { DEMO_MODE } from "@/config";
 
 export const prerender = false;
 
@@ -13,22 +12,7 @@ export const GET: APIRoute = async ({ locals, cookies }) => {
   const { supabase } = locals;
 
   try {
-    // DEMO MODE: Return mock owner user
-    if (DEMO_MODE) {
-      return new Response(
-        JSON.stringify({
-          user: {
-            id: "00000000-0000-0000-0000-000000000001",
-            email: "demo@example.com",
-            name: "Demo User",
-            role: "owner",
-          },
-        }),
-        { status: 200, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-    // Get session from cookies
+    // Get session from cookies (already set by middleware)
     const accessToken = cookies.get("sb-access-token")?.value;
     const refreshToken = cookies.get("sb-refresh-token")?.value;
 
@@ -39,13 +23,10 @@ export const GET: APIRoute = async ({ locals, cookies }) => {
       });
     }
 
-    // Set session
-    const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
-      access_token: accessToken,
-      refresh_token: refreshToken,
-    });
+    // Get current user from session
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-    if (sessionError || !sessionData.session) {
+    if (userError || !user) {
       return new Response(JSON.stringify({ error: "Invalid session" }), {
         status: 401,
         headers: { "Content-Type": "application/json" },
@@ -56,7 +37,7 @@ export const GET: APIRoute = async ({ locals, cookies }) => {
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("id, name, role, created_at, updated_at")
-      .eq("id", sessionData.session.user.id)
+      .eq("id", user.id)
       .single();
 
     if (profileError || !profile) {
@@ -70,7 +51,7 @@ export const GET: APIRoute = async ({ locals, cookies }) => {
       JSON.stringify({
         user: {
           id: profile.id,
-          email: sessionData.session.user.email,
+          email: user.email,
           name: profile.name,
           role: profile.role,
         },
