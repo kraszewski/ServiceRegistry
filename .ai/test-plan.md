@@ -85,12 +85,66 @@ Następujące funkcjonalności nie wchodzą w zakres MVP zgodnie z PRD:
 ## 3. Typy testów do przeprowadzenia
 
 ### 3.1 Testy jednostkowe (Unit Tests)
-**Status**: Wyłączone z MVP zgodnie z PRD  
-**Uzasadnienie**: Zgodnie z dokumentem PRD, testy jednostkowe (Vitest) nie są wymagane w MVP. Skupiamy się na testach E2E dla krytycznych ścieżek użytkownika.
+**Status**: ✅ **Częściowo zaimplementowane** (od 2026-01-25)  
+**Framework**: Vitest 4.0.18
+
+**Zaimplementowane testy**:
+
+#### ✅ Schematy walidacji Zod - Equipment (`src/lib/schemas/equipment.schema.test.ts`)
+**Status**: 24/24 testy przechodzą  
+**Pokrycie**: Walidacja schematów dla zarządzania sprzętem
+
+**Testowane obszary**:
+1. **createEquipmentSchema** (10 testów):
+   - ✅ Walidacja poprawnych danych z polami wymaganymi
+   - ✅ Walidacja z polami opcjonalnymi
+   - ✅ Odrzucenie danych z brakującym polem `name`
+   - ✅ Odrzucenie pustego `name`
+   - ✅ Odrzucenie `name` > 100 znaków
+   - ✅ Odrzucenie nieprawidłowej kategorii
+   - ✅ Akceptacja wszystkich 8 kategorii sprzętu
+   - ✅ Odrzucenie nieprawidłowego formatu daty (wymaga YYYY-MM-DD)
+   - ✅ Akceptacja wartości `null` dla pól opcjonalnych
+   - ✅ Odrzucenie `location` > 200 znaków
+
+2. **equipmentListParamsSchema** (8 testów):
+   - ✅ Domyślne wartości dla parametrów paginacji
+   - ✅ Konwersja string → number dla `page` i `limit`
+   - ✅ Odrzucenie `page < 1`
+   - ✅ Odrzucenie `limit > 100`
+   - ✅ Akceptacja prawidłowych pól sortowania
+   - ✅ Akceptacja prawidłowych kierunków sortowania (asc/desc)
+   - ✅ Akceptacja opcjonalnego filtru kategorii
+   - ✅ Akceptacja opcjonalnego parametru wyszukiwania
+
+3. **updateEquipmentSchema** (4 testy):
+   - ✅ Częściowa aktualizacja z tylko zmienionymi polami
+   - ✅ Aktualizacja wielu pól jednocześnie
+   - ✅ Walidacja według tych samych zasad co create
+   - ✅ Akceptacja pustego obiektu (brak zmian)
+
+4. **equipmentCategoryEnum** (2 testy):
+   - ✅ Walidacja wszystkich prawidłowych kategorii
+   - ✅ Odrzucenie nieprawidłowej kategorii
+
+**Uruchomienie testów**:
+```bash
+# Tryb watch
+npm run test
+
+# Jednorazowe uruchomienie (CI)
+npm run test:run
+
+# Interfejs UI
+npm run test:ui
+```
 
 **Potencjalne obszary do testów jednostkowych w przyszłości**:
 - Funkcje pomocnicze w `src/lib/utils.ts`
-- Schematy walidacji Zod
+- Pozostałe schematy walidacji Zod:
+  - `src/lib/schemas/service-entry.schema.ts`
+  - `src/lib/schemas/user.schema.ts`
+  - `src/lib/schemas/pagination.schema.ts`
 - Logika biznesowa w serwisach (`src/lib/services/`)
 - Funkcje formatujące daty, kategorie, typy
 
@@ -235,9 +289,22 @@ Następujące funkcjonalności nie wchodzą w zakres MVP zgodnie z PRD:
 
 ### 3.4 Testy E2E (End-to-End) - Playwright
 
+**Status**: ✅ **Częściowo zaimplementowane** (od 2026-01-25)  
+**Framework**: Playwright 1.49.0  
+**Konfiguracja**: `playwright.config.ts`  
+**Katalog testów**: `e2e/`
+
+**Zaimplementowane**:
+- ✅ Konfiguracja Playwright dla trzech przeglądarek (Chromium, Firefox, WebKit)
+- ✅ Automatyczne uruchamianie w CI/CD (GitHub Actions)
+- ✅ Przykładowy test homepage (`e2e/homepage.spec.ts`)
+- ✅ Środowisko integration w CI z sekretami Supabase
+- ✅ Zbieranie coverage i raportów testowych
+
 Zgodnie z PRD, wymagany jest minimum 1 test E2E sprawdzający krytyczną ścieżkę użytkownika.
 
 #### Test E2E krytycznej ścieżki (US-014)
+**Status**: 🔜 Do zaimplementowania  
 **Scenariusz**: Logowanie → Dodanie sprzętu → Dodanie wpisu serwisowego
 
 ```
@@ -661,51 +728,119 @@ npm run dev
 
 ### 5.2 CI/CD (GitHub Actions)
 
-#### Konfiguracja pipeline
+**Status**: ✅ **Zaimplementowane** (od 2026-01-25)
+
+#### Workflow Pull Request CI
+
+Workflow `.github/workflows/pull-request.yml` działa na każdy pull request do brancha `master`.
+
+**Pipeline wykonuje następujące kroki**:
+
+1. **Lint** - Sprawdzanie jakości kodu za pomocą ESLint
+2. **Unit Tests** (równolegle po lincie) - Testy jednostkowe z coverage
+3. **E2E Tests** (równolegle po lincie) - Testy Playwright w środowisku integration
+4. **Status Comment** - Komentarz do PR z podsumowaniem wyników
+
+**Konfiguracja**:
+
 ```yaml
-name: CI/CD Pipeline
+name: Pull Request CI
 
 on:
-  push:
-    branches: [main, develop]
   pull_request:
-    branches: [main, develop]
+    branches:
+      - master
 
 jobs:
-  test:
+  lint:
+    name: Lint Code
     runs-on: ubuntu-latest
-    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: '20'
-      
-      - name: Install dependencies
-        run: npm ci
-      
-      - name: Start Supabase
-        run: npx supabase start
-      
-      - name: Run database migrations
-        run: npx supabase db reset --db-url ${{ secrets.TEST_DB_URL }}
-      
-      - name: Build application
-        run: npm run build
-      
-      - name: Run E2E tests (Playwright)
-        run: npx playwright test
-      
-      - name: Upload test results
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+
+  unit-test:
+    name: Unit Tests
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run test:run -- --coverage
+      - uses: actions/upload-artifact@v6
+        with:
+          name: unit-coverage
+          path: coverage/
+
+  e2e-test:
+    name: E2E Tests
+    needs: lint
+    runs-on: ubuntu-latest
+    environment: integration
+    env:
+      PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
+      PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      - run: npm ci
+      - run: npx playwright install --with-deps
+      - run: npm run test:e2e -- --coverage
+      - uses: actions/upload-artifact@v6
         if: always()
-        uses: actions/upload-artifact@v3
         with:
-          name: playwright-results
+          name: e2e-coverage
+          path: coverage-e2e/
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: playwright-report
           path: playwright-report/
+
+  status-comment:
+    name: Status Comment
+    needs: [lint, unit-test, e2e-test]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/download-artifact@v7
+        continue-on-error: true
+        with:
+          name: unit-coverage
+      - uses: actions/download-artifact@v7
+        continue-on-error: true
+        with:
+          name: e2e-coverage
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            # Tworzy lub aktualizuje komentarz w PR z wynikami wszystkich jobów
 ```
+
+**Wymagane sekrety GitHub**:
+- `PUBLIC_SUPABASE_URL` - URL projektu Supabase dla testów integracyjnych
+- `PUBLIC_SUPABASE_ANON_KEY` - Klucz anon dla Supabase
+
+**Artefakty** (przechowywane przez 7 dni):
+- Coverage z testów jednostkowych
+- Coverage z testów E2E
+- Raporty Playwright
+
+**Dokumentacja**: `.github/workflows/README.md`
 
 ### 5.3 Staging (opcjonalnie)
 
@@ -719,45 +854,103 @@ jobs:
 
 ## 6. Narzędzia do testowania
 
-### 6.1 Testy E2E
-**Playwright**
-- Wersja: Latest
-- Przeglądarki: Chromium, Firefox, WebKit
-- Konfiguracja: `playwright.config.ts`
-- Uruchomienie: `npx playwright test`
-- Tryb UI: `npx playwright test --ui`
-- Debug: `npx playwright test --debug`
+### 6.1 Testy jednostkowe
+**Vitest** ✅ **Zaimplementowane**
+- Wersja: 4.0.18
+- Konfiguracja: `vitest.config.ts`
+- Uruchomienie: `npm run test` (watch mode)
+- Uruchomienie jednorazowe: `npm run test:run` (CI)
+- Tryb UI: `npm run test:ui`
 
-**Lokalizacja testów**: `tests/e2e/`
+**Lokalizacja testów**: Testy umieszczone obok testowanego kodu z rozszerzeniem `.test.ts`
 
 **Przykładowa struktura plików testów**:
 ```
-tests/
-├── e2e/
-│   ├── auth/
-│   │   ├── login.spec.ts
-│   │   └── logout.spec.ts
-│   ├── equipment/
-│   │   ├── list.spec.ts
-│   │   ├── create.spec.ts
-│   │   ├── edit.spec.ts
-│   │   ├── delete.spec.ts
-│   │   └── search.spec.ts
-│   ├── service-entries/
-│   │   ├── create.spec.ts
-│   │   ├── edit.spec.ts
-│   │   └── delete.spec.ts
-│   ├── users/
-│   │   ├── list.spec.ts
-│   │   ├── create.spec.ts
-│   │   └── delete.spec.ts
-│   └── critical-path.spec.ts  # US-014: Test krytycznej ścieżki
-└── fixtures/
-    ├── test-data.ts
-    └── auth-helpers.ts
+src/
+└── lib/
+    └── schemas/
+        ├── equipment.schema.ts         # Schemat walidacji
+        ├── equipment.schema.test.ts    # ✅ Testy jednostkowe (24 testy)
+        ├── service-entry.schema.ts     # Schemat walidacji
+        ├── service-entry.schema.test.ts # 🔜 Do zaimplementowania
+        ├── user.schema.ts              # Schemat walidacji
+        └── user.schema.test.ts         # 🔜 Do zaimplementowania
 ```
 
-### 6.2 Testy API
+### 6.2 Testy E2E
+**Playwright** ✅ **Częściowo zaimplementowane** (od 2026-01-25)
+- Wersja: 1.49.0
+- Przeglądarki: Chromium, Firefox, WebKit
+- Konfiguracja: `playwright.config.ts` ✅
+- Coverage provider: @vitest/coverage-v8 4.0.18 ✅
+- Uruchomienie: `npm run test:e2e`
+- Uruchomienie headed: `npx playwright test --headed`
+- Tryb UI: `npx playwright test --ui`
+- Debug: `npx playwright test --debug`
+- Raport: `npx playwright show-report`
+
+**Lokalizacja testów**: `e2e/` ✅
+
+**Struktura plików testów**:
+```
+e2e/
+├── README.md                    # ✅ Dokumentacja testów E2E
+├── homepage.spec.ts             # ✅ Przykładowy test
+├── auth/                        # 🔜 Do zaimplementowania
+│   ├── login.spec.ts
+│   └── logout.spec.ts
+├── equipment/                   # 🔜 Do zaimplementowania
+│   ├── list.spec.ts
+│   ├── create.spec.ts
+│   ├── edit.spec.ts
+│   └── delete.spec.ts
+├── service-entries/             # 🔜 Do zaimplementowania
+│   ├── create.spec.ts
+│   ├── edit.spec.ts
+│   └── delete.spec.ts
+├── users/                       # 🔜 Do zaimplementowania
+│   ├── list.spec.ts
+│   └── manage.spec.ts
+└── critical-path.spec.ts        # 🔜 Test krytycznej ścieżki (US-014)
+```
+
+**Fixtures i helpers**:
+```
+e2e/
+├── fixtures/                    # 🔜 Do zaimplementowania
+│   ├── test-data.ts
+│   └── auth-helpers.ts
+```
+
+### 6.3 Code Coverage
+**@vitest/coverage-v8** ✅ **Zaimplementowane** (od 2026-01-25)
+- Wersja: 4.0.18
+- Provider: v8 (wbudowany w Node.js)
+- Konfiguracja: `vitest.config.ts` ✅
+- Reporters: text, json, html, lcov
+
+**Uruchomienie**:
+```bash
+# Coverage z testów jednostkowych
+npm run test:run -- --coverage
+
+# W CI/CD coverage zbierany automatycznie
+```
+
+**Wykluczenia z coverage**:
+- `node_modules/`
+- `dist/`
+- `.astro/`
+- `**/*.config.{js,ts,mjs}`
+- `**/*.d.ts`
+- `**/types.ts`
+
+**Artefakty CI/CD**:
+- Coverage z testów jednostkowych: `coverage/`
+- Coverage z testów E2E: `coverage-e2e/`
+- Przechowywane przez 7 dni w GitHub Actions
+
+### 6.4 Testy API
 **Narzędzia**:
 - **Postman/Insomnia**: Manualne testowanie API
 - **Playwright API testing**: Automatyczne testy API w ramach E2E
@@ -767,7 +960,7 @@ tests/
 - Folder: `.ai/api-collection.json` (do utworzenia)
 - Zmienne środowiskowe: local, staging, production
 
-### 6.3 Testy bazy danych
+### 6.5 Testy bazy danych
 **pgTAP** (opcjonalnie dla zaawansowanych testów)
 - Testy funkcji PostgreSQL
 - Testy RLS policies
@@ -778,7 +971,7 @@ tests/
 - Podgląd danych
 - Debugowanie RLS
 
-### 6.4 Testy wydajnościowe
+### 6.6 Testy wydajnościowe
 **Lighthouse** (wbudowany w Chrome DevTools)
 - Performance score
 - Accessibility score
@@ -1138,7 +1331,7 @@ Używaj następujących labels:
 
 Ten plan testów definiuje kompleksową strategię testowania aplikacji ServiceRegistry, obejmującą:
 
-✅ **7 typów testów**: Unit (wyłączone z MVP), API Integration, Database, E2E, Performance, UI/UX, Security  
+✅ **7 typów testów**: Unit (✅ częściowo zaimplementowane), API Integration (🔜), Database (🔜), E2E (🔜), Performance (🔜), UI/UX (🔜), Security (🔜)  
 ✅ **14 historyjek użytkowników**: Wszystkie US z PRD pokryte testami  
 ✅ **4 główne moduły**: Auth, Users, Equipment, Service Entries  
 ✅ **3 środowiska testowe**: Local, CI/CD, Staging (opcjonalnie)  
@@ -1146,35 +1339,99 @@ Ten plan testów definiuje kompleksową strategię testowania aplikacji ServiceR
 ✅ **Jasne kryteria akceptacji**: Mierzalne cele dla każdego typu testów  
 ✅ **Procedury raportowania**: Strukturyzowany proces zgłaszania i trackowania błędów  
 
+### Status implementacji (2026-01-25)
+
+✅ **Testy jednostkowe**: Zaimplementowane dla schematów walidacji Equipment
+- Framework: Vitest 4.0.18
+- Coverage provider: @vitest/coverage-v8 4.0.18
+- Lokalizacja: `src/lib/schemas/equipment.schema.test.ts`
+- Pokrycie: 24 testy sprawdzające walidację danych sprzętu
+- Status: Wszystkie testy przechodzą (24/24)
+
+✅ **Testy E2E - Infrastruktura**: Podstawowa konfiguracja gotowa
+- Framework: Playwright 1.49.0
+- Konfiguracja: `playwright.config.ts`
+- Przeglądarki: Chromium, Firefox, WebKit
+- Lokalizacja: `e2e/`
+- Status: Przykładowy test homepage zaimplementowany
+- Dokumentacja: `e2e/README.md`
+
+✅ **CI/CD Pipeline**: GitHub Actions workflow zaimplementowany
+- Workflow: `.github/workflows/pull-request.yml`
+- Jobs: Lint → (Unit Tests + E2E Tests równolegle) → Status Comment
+- Artefakty: Coverage (unit + e2e), raporty Playwright (7 dni retencji)
+- Środowisko: integration z sekretami Supabase
+- Dokumentacja: `.github/workflows/README.md`
+
+🔜 **Następne kroki**: 
+1. ✅ ~~Setup Playwright dla testów E2E~~ **DONE**
+2. ✅ ~~Konfiguracja CI/CD pipeline~~ **DONE**
+3. Implementacja testu krytycznej ścieżki (US-014)
+4. Rozszerzenie testów jednostkowych na pozostałe schematy
+5. Dodanie testów E2E dla kluczowych funkcjonalności  
+
 ### 11.2 Priorytety implementacji testów
 
+**✅ ZAIMPLEMENTOWANE**:
+1. ✅ **Testy jednostkowe - Schematy walidacji Equipment** (2026-01-25)
+   - 24 testy dla `equipment.schema.ts`
+   - Pokrycie walidacji: createEquipment, updateEquipment, listParams, categoryEnum
+   - Wszystkie testy przechodzą
+2. ✅ **Infrastruktura E2E - Playwright** (2026-01-25)
+   - Konfiguracja Playwright dla 3 przeglądarek
+   - Coverage provider (@vitest/coverage-v8)
+   - Przykładowy test homepage
+   - Dokumentacja w `e2e/README.md`
+3. ✅ **CI/CD Pipeline - GitHub Actions** (2026-01-25)
+   - Workflow `.github/workflows/pull-request.yml`
+   - Lint → (Unit Tests + E2E Tests) → Status Comment
+   - Artefakty: coverage + raporty Playwright
+   - Środowisko integration z sekretami Supabase
+
 **MUST HAVE (MVP)**:
-1. ✅ Test krytycznej ścieżki E2E (US-014) - **NAJWYŻSZY PRIORYTET**
-2. ✅ Testy autentykacji (login/logout)
-3. ✅ Testy autoryzacji ról (owner/worker)
-4. ✅ Testy CRUD sprzętu
-5. ✅ Testy CRUD wpisów serwisowych
-6. ✅ Testy RLS na poziomie bazy danych
-7. ✅ CI/CD pipeline z testami
+4. 🔜 Test krytycznej ścieżki E2E (US-014) - **NAJWYŻSZY PRIORYTET**
+5. 🔜 Testy autentykacji (login/logout)
+6. 🔜 Testy autoryzacji ról (owner/worker)
+7. 🔜 Testy CRUD sprzętu
+8. 🔜 Testy CRUD wpisów serwisowych
+9. 🔜 Testy RLS na poziomie bazy danych
 
 **SHOULD HAVE (po MVP)**:
-8. Testy zarządzania użytkownikami
-9. Testy filtrowania i sortowania
-10. Testy paginacji i wyszukiwania
-11. Testy walidacji wszystkich formularzy
-12. Testy responsywności
-13. Testy accessibility (podstawowe)
+10. 🔜 Testy jednostkowe - pozostałe schematy (service-entry, user, pagination)
+11. 🔜 Testy zarządzania użytkownikami
+12. 🔜 Testy filtrowania i sortowania
+13. 🔜 Testy paginacji i wyszukiwania
+14. 🔜 Testy walidacji wszystkich formularzy
+15. 🔜 Testy responsywności
+16. 🔜 Testy accessibility (podstawowe)
 
 **NICE TO HAVE (rozszerzenie)**:
-14. Testy wydajnościowe (Lighthouse)
-15. Testy jednostkowe (Vitest)
-16. Zaawansowane testy accessibility (screen reader)
-17. Testy bezpieczeństwa (penetration testing)
-18. Visual regression testing
+17. 🔜 Testy wydajnościowe (Lighthouse)
+18. 🔜 Testy jednostkowe logiki biznesowej
+19. 🔜 Zaawansowane testy accessibility (screen reader)
+20. 🔜 Testy bezpieczeństwa (penetration testing)
+21. 🔜 Visual regression testing
 
 ### 11.3 Następne kroki
 
-#### Krok 1: Setup środowiska (Dzień 1)
+#### ✅ Krok 0: Testy jednostkowe - Schematy walidacji (Zrealizowane - 2026-01-25)
+```bash
+# ✅ Instalacja Vitest
+npm install -D vitest
+
+# ✅ Utworzenie konfiguracji Vitest
+vitest.config.ts
+
+# ✅ Implementacja testów dla schematów equipment
+src/lib/schemas/equipment.schema.test.ts (24 testy)
+
+# ✅ Dodanie skryptów npm
+npm run test / test:run / test:ui
+```
+
+**Rezultat**: 24/24 testy przechodzą, brak błędów lintera
+
+#### Krok 1: Setup środowiska E2E (Dzień 1)
 ```bash
 # Instalacja Playwright
 npm install -D @playwright/test
@@ -1305,8 +1562,12 @@ npm run db:reset
 
 ---
 
-**Wersja dokumentu**: 1.0  
+**Wersja dokumentu**: 1.1  
 **Data utworzenia**: 2026-01-25  
 **Ostatnia aktualizacja**: 2026-01-25  
 **Autor**: AI Agent (Claude Sonnet 4.5) w ramach AI-driven development  
-**Status**: Wersja robocza - do review przez Developer
+**Status**: Wersja robocza - częściowo zaimplementowana
+
+**Historia zmian**:
+- v1.0 (2026-01-25): Utworzenie kompleksowego planu testów
+- v1.1 (2026-01-25): Aktualizacja o rzeczywistą implementację testów jednostkowych (Vitest, 24 testy dla equipment.schema)

@@ -1,0 +1,185 @@
+name: Pull Request CI
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint
+
+  unit-test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests with coverage
+        run: npm run test:run -- --coverage
+
+      - name: Upload unit test coverage
+        uses: actions/upload-artifact@v6
+        with:
+          name: unit-coverage
+          path: coverage/
+          retention-days: 7
+
+  e2e-test:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    needs: lint
+    environment: integration
+    env:
+      PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
+      PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run E2E tests with coverage
+        run: npm run test:e2e -- --coverage
+
+      - name: Upload E2E test coverage
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: e2e-coverage
+          path: coverage-e2e/
+          retention-days: 7
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+  status-comment:
+    name: Status Comment
+    runs-on: ubuntu-latest
+    needs: [lint, unit-test, e2e-test]
+    if: always()
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Download unit test coverage
+        uses: actions/download-artifact@v7
+        continue-on-error: true
+        with:
+          name: unit-coverage
+          path: coverage/
+
+      - name: Download E2E test coverage
+        uses: actions/download-artifact@v7
+        continue-on-error: true
+        with:
+          name: e2e-coverage
+          path: coverage-e2e/
+
+      - name: Create status comment
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const lintResult = '${{ needs.lint.result }}';
+            const unitTestResult = '${{ needs.unit-test.result }}';
+            const e2eTestResult = '${{ needs.e2e-test.result }}';
+
+            const getEmoji = (status) => {
+              switch(status) {
+                case 'success': return '✅';
+                case 'failure': return '❌';
+                case 'cancelled': return '🚫';
+                case 'skipped': return '⏭️';
+                default: return '❓';
+              }
+            };
+
+            const allPassed = lintResult === 'success' && 
+                            unitTestResult === 'success' && 
+                            e2eTestResult === 'success';
+
+            const overallStatus = allPassed ? '✅ All checks passed!' : '❌ Some checks failed';
+
+            const body = `## Pull Request CI Status
+
+            ${overallStatus}
+
+            ### Job Results:
+            - ${getEmoji(lintResult)} **Lint**: ${lintResult}
+            - ${getEmoji(unitTestResult)} **Unit Tests**: ${unitTestResult}
+            - ${getEmoji(e2eTestResult)} **E2E Tests**: ${e2eTestResult}
+
+            ---
+            *CI run completed at: ${new Date().toISOString()}*
+            `;
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(comment => 
+              comment.user.type === 'Bot' && 
+              comment.body.includes('Pull Request CI Status')
+            );
+
+            if (botComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: body
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body
+              });
+            }

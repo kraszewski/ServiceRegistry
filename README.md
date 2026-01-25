@@ -15,6 +15,7 @@
 - [Uruchomienie](#-uruchomienie)
 - [Struktura projektu](#-struktura-projektu)
 - [Baza danych](#-baza-danych)
+- [Testowanie](#-testowanie)
 - [Dokumentacja](#-dokumentacja)
 - [Licencja](#-licencja)
 
@@ -77,6 +78,9 @@ ServiceRegistry zapewnia proste narzędzie do kompletnego rejestrowania wszystki
 - **Prettier** - Formatowanie kodu
 - **Husky** - Git hooks
 - **TypeScript** - Statyczne typowanie
+- **Vitest** - Framework do testów jednostkowych
+- **Playwright** - Framework do testów E2E
+- **GitHub Actions** - CI/CD pipeline
 
 ## 📦 Wymagania
 
@@ -173,6 +177,7 @@ ServiceRegistry/
 ├── .ai/                        # Dokumentacja projektowa i plany
 │   ├── prd.md                  # Product Requirements Document
 │   ├── db-plan.md              # Plan struktury bazy danych
+│   ├── test-plan.md            # Plan testów
 │   └── ...                     # Inne dokumenty techniczne
 ├── .cursor/                    # Reguły dla AI (Cursor IDE)
 ├── public/                     # Publiczne assety (favicon, itp.)
@@ -187,7 +192,7 @@ ServiceRegistry/
 │   ├── lib/
 │   │   ├── api/                # Klienty API
 │   │   ├── constants/          # Stałe (kategorie, role, typy)
-│   │   ├── schemas/            # Schematy walidacji Zod
+│   │   ├── schemas/            # Schematy walidacji Zod (+ testy)
 │   │   ├── services/           # Logika biznesowa
 │   │   └── utils.ts            # Funkcje pomocnicze
 │   ├── middleware/             # Middleware Astro (autentykacja)
@@ -211,6 +216,7 @@ ServiceRegistry/
 │   └── README.md               # Dokumentacja bazy danych
 ├── .env.example                # Przykładowa konfiguracja środowiska
 ├── astro.config.mjs            # Konfiguracja Astro
+├── vitest.config.ts            # Konfiguracja Vitest
 ├── package.json                # Zależności i skrypty npm
 ├── tsconfig.json               # Konfiguracja TypeScript
 └── README.md                   # Ten plik
@@ -250,9 +256,92 @@ ServiceRegistry/
 
 Więcej informacji: [supabase/README.md](supabase/README.md)
 
+## 🧪 Testowanie
+
+ServiceRegistry wykorzystuje **Vitest** do testów jednostkowych oraz **Playwright** do testów E2E.
+
+### Aktualny zakres testów
+
+#### Testy jednostkowe (Vitest)
+✅ **Schematy walidacji Zod** - `src/lib/schemas/equipment.schema.test.ts`
+- 24 testy pokrywające walidację danych sprzętu
+- Testy dla `createEquipmentSchema`, `updateEquipmentSchema`, `equipmentListParamsSchema`
+- Walidacja pól wymaganych, opcjonalnych, formatów daty, limitów długości
+- Walidacja kategorii sprzętu i parametrów paginacji
+
+#### Testy E2E (Playwright)
+🔜 **Podstawowa konfiguracja gotowa** - `e2e/`
+- Konfiguracja dla trzech przeglądarek (Chromium, Firefox, WebKit)
+- Automatyczne uruchamianie w CI/CD
+- Zbieranie coverage i raportów testowych
+
+### Uruchamianie testów
+
+#### Testy jednostkowe
+
+```bash
+# Tryb watch (automatyczne ponowne uruchamianie przy zmianach)
+npm run test
+
+# Jednorazowe uruchomienie (przydatne w CI/CD)
+npm run test:run
+
+# Jednorazowe uruchomienie z coverage
+npm run test:run -- --coverage
+
+# Interfejs UI z podglądem wyników
+npm run test:ui
+```
+
+#### Testy E2E
+
+```bash
+# Zainstaluj przeglądarki (tylko za pierwszym razem)
+npx playwright install --with-deps
+
+# Uruchom testy E2E
+npm run test:e2e
+
+# Uruchom testy w trybie headed (widoczna przeglądarka)
+npx playwright test --headed
+
+# Uruchom testy dla konkretnej przeglądarki
+npx playwright test --project=chromium
+
+# Uruchom testy w trybie debug
+npx playwright test --debug
+
+# Zobacz raport z testów
+npx playwright show-report
+```
+
+### Struktura testów
+
+Testy są umieszczone w tych samych katalogach co testowany kod, z rozszerzeniem `.test.ts`:
+
+```
+src/
+└── lib/
+    └── schemas/
+        ├── equipment.schema.ts       # Schemat walidacji
+        └── equipment.schema.test.ts  # Testy jednostkowe
+```
+
+### Plany rozwoju testów
+
+Zgodnie z [Test Plan](.ai/test-plan.md), planowane są kolejne typy testów:
+
+- 🔜 **Testy E2E (Playwright)** - krytyczne ścieżki użytkownika
+- 🔜 **Testy API** - weryfikacja endpointów
+- 🔜 **Testy RLS** - bezpieczeństwo na poziomie bazy danych
+- 🔜 **Testy accessibility** - wsparcie dla czytników ekranu
+
+Więcej informacji: [.ai/test-plan.md](.ai/test-plan.md)
+
 ## 📚 Dokumentacja
 
 - **[PRD](.ai/prd.md)** - Dokument wymagań produktu
+- **[Test Plan](.ai/test-plan.md)** - Kompleksowy plan testów
 - **[Database README](supabase/README.md)** - Dokumentacja bazy danych
 - **[Database Quickstart](supabase/QUICKSTART.md)** - Szybki start z bazą
 - **[SQL Examples](supabase/EXAMPLES.md)** - Przykłady zapytań SQL
@@ -280,6 +369,44 @@ npm run lint            # Sprawdź kod ESLintem
 npm run lint:fix        # Napraw problemy ESLint
 npm run format          # Formatuj kod Prettier
 ```
+
+### Testowanie
+
+```bash
+npm run test            # Uruchom testy jednostkowe w trybie watch
+npm run test:run        # Uruchom testy jednostkowe jednorazowo (CI)
+npm run test:ui         # Uruchom testy z interfejsem UI
+npm run test:e2e        # Uruchom testy E2E (Playwright)
+```
+
+## 🔄 CI/CD
+
+Projekt wykorzystuje **GitHub Actions** do automatyzacji procesów CI/CD.
+
+### Pull Request Pipeline
+
+Każdy pull request do brancha `master` automatycznie uruchamia workflow, który:
+
+1. **Lintuje kod** - Sprawdza jakość kodu za pomocą ESLint
+2. **Uruchamia testy** (równolegle):
+   - **Unit tests** - Testy jednostkowe z coverage
+   - **E2E tests** - Testy end-to-end z Playwright
+3. **Publikuje status** - Dodaje komentarz do PR z wynikami
+
+### Artefakty
+
+Pipeline generuje następujące artefakty (przechowywane przez 7 dni):
+- Raporty coverage z testów jednostkowych
+- Raporty coverage z testów E2E
+- Raporty Playwright
+
+### Wymagania
+
+Aby testy E2E działały w CI, skonfiguruj następujące sekrety w GitHub:
+- `PUBLIC_SUPABASE_URL` - URL projektu Supabase do testów integracyjnych
+- `PUBLIC_SUPABASE_ANON_KEY` - Klucz anon dla Supabase
+
+Więcej informacji: [.github/workflows/README.md](.github/workflows/README.md)
 
 ## 🚀 Deployment
 
