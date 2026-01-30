@@ -134,6 +134,7 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Login error:", error);
     const errorResponse: ErrorResponse = { error: "Internal server error" };
     return new Response(JSON.stringify(errorResponse), {

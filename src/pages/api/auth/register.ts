@@ -94,6 +94,7 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
         });
       }
 
+      // eslint-disable-next-line no-console
       console.error("Sign up error:", signUpError);
       const errorResponse: ErrorResponse = { error: "Nie udało się utworzyć konta" };
       return new Response(JSON.stringify(errorResponse), {
@@ -165,6 +166,7 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Registration error:", error);
     const errorResponse: ErrorResponse = { error: "Internal server error" };
     return new Response(JSON.stringify(errorResponse), {

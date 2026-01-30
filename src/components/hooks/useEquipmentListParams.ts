@@ -11,7 +11,7 @@ import type { EquipmentListParams } from "@/types";
  */
 const DEFAULT_PARAMS: Required<EquipmentListParams> = {
   page: 1,
-  limit: 50,
+  limit: 10,
   sort: "created_at",
   order: "desc",
   category: undefined as never,
@@ -29,7 +29,7 @@ function parseParams(searchParams: URLSearchParams): EquipmentListParams {
   params.page = page >= 1 ? page : DEFAULT_PARAMS.page;
 
   // Parse limit (1-100 range)
-  const limit = parseInt(searchParams.get("limit") || "50", 10);
+  const limit = parseInt(searchParams.get("limit") || "10", 10);
   params.limit = limit >= 1 && limit <= 100 ? limit : DEFAULT_PARAMS.limit;
 
   // Parse sort field
@@ -160,7 +160,7 @@ export function useEquipmentListParams() {
 
     const searchParams = new URLSearchParams();
     searchParams.set("page", "1");
-    searchParams.set("limit", "50");
+    searchParams.set("limit", "10");
 
     const newUrl = `${window.location.pathname}?${searchParams.toString()}`;
     window.history.pushState({}, "", newUrl);

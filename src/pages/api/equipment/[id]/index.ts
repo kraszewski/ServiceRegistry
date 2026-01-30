@@ -68,6 +68,7 @@ export const GET: APIRoute = async ({ locals, params }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Error fetching equipment:", error);
 
     // Handle not found error
@@ -187,6 +188,7 @@ export const PATCH: APIRoute = async ({ params, locals, request }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Error updating equipment:", error);
 
     if (error instanceof Error) {
@@ -281,6 +283,7 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Error deleting equipment:", error);
 
     if (error instanceof Error && error.message === "Equipment not found") {

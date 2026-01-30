@@ -45,8 +45,6 @@ const STORAGE_KEY = "equipment-form-draft";
  * Equipment form dialog for create and edit operations
  */
 export function EquipmentFormDialog({ mode, equipment, open, onOpenChange, onSuccess }: EquipmentFormDialogProps) {
-  console.log("EquipmentFormDialog called with:", { mode, open, equipment: !!equipment });
-
   const categories = getCategoryOptions();
   const createMutation = useCreateEquipment();
   const updateMutation = useUpdateEquipment();
@@ -74,6 +72,7 @@ export function EquipmentFormDialog({ mode, equipment, open, onOpenChange, onSuc
           const parsed = JSON.parse(draft);
           form.reset(parsed);
         } catch (e) {
+          // eslint-disable-next-line no-console
           console.error("Failed to parse draft:", e);
         }
       }
@@ -147,6 +146,7 @@ export function EquipmentFormDialog({ mode, equipment, open, onOpenChange, onSuc
         onOpenChange(false);
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Form submission error:", error);
 
       const apiError = error as { status?: number };

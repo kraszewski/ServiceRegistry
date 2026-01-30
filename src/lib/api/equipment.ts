@@ -33,8 +33,10 @@ export class ApiError extends Error {
 export async function fetchEquipmentList(params: EquipmentListParams): Promise<EquipmentListResponse> {
   const searchParams = new URLSearchParams();
 
-  if (params.page) searchParams.set("page", String(params.page));
-  if (params.limit) searchParams.set("limit", String(params.limit));
+  // Always include page and limit (with defaults)
+  searchParams.set("page", String(params.page ?? 1));
+  searchParams.set("limit", String(params.limit ?? 10));
+
   if (params.sort) searchParams.set("sort", params.sort);
   if (params.order) searchParams.set("order", params.order);
   if (params.category) searchParams.set("category", params.category);

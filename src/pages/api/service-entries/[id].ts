@@ -67,6 +67,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Error fetching service entry:", error);
 
     if (error instanceof Error && error.message === "Service entry not found") {
@@ -177,6 +178,7 @@ export const PATCH: APIRoute = async ({ params, locals, request }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Error updating service entry:", error);
 
     if (error instanceof Error && error.message === "Service entry not found") {
@@ -260,6 +262,7 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Error deleting service entry:", error);
 
     if (error instanceof Error && error.message === "Service entry not found") {

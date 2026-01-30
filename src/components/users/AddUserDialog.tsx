@@ -58,6 +58,7 @@ export function AddUserDialog({ open, onOpenChange, onSuccess }: AddUserDialogPr
       onOpenChange(false);
       onSuccess();
     } catch (error: unknown) {
+      // eslint-disable-next-line no-console
       console.error("Failed to create user:", error);
 
       // Handle API errors

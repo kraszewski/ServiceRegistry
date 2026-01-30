@@ -73,6 +73,7 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
       onSuccess?.();
       window.location.href = "/equipment";
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Login error:", error);
       const errorMessage = error instanceof Error ? error.message : "Wystąpił błąd podczas logowania";
 

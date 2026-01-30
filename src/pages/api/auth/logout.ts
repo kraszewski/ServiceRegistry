@@ -24,6 +24,7 @@ export const POST: APIRoute = async ({ locals, cookies }) => {
     const { error: signOutError } = await supabase.auth.signOut();
 
     if (signOutError) {
+      // eslint-disable-next-line no-console
       console.error("Supabase sign out error:", signOutError);
       // Continue to clear cookies even if sign out fails
     }
@@ -47,6 +48,7 @@ export const POST: APIRoute = async ({ locals, cookies }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Logout error:", error);
     const errorResponse: ErrorResponse = { error: "Internal server error" };
     return new Response(JSON.stringify(errorResponse), {

@@ -33,7 +33,7 @@ export class EquipmentService {
    * @throws Error if database query fails
    */
   async listEquipment(params: EquipmentListParams): Promise<EquipmentListResponse> {
-    const { page = 1, limit = 50, sort = "created_at", order = "desc", category, search } = params;
+    const { page = 1, limit = 10, sort = "created_at", order = "desc", category, search } = params;
 
     const offset = (page - 1) * limit;
 

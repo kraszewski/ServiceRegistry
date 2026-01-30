@@ -34,7 +34,7 @@ export const equipmentCategoryEnum = z.enum([
  */
 export const equipmentListParamsSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(100).default(50),
+  limit: z.coerce.number().int().min(1).max(100).default(10),
   sort: z.enum(["created_at", "name", "equipment_id", "category", "manufacturer"]).default("created_at"),
   order: z.enum(["asc", "desc"]).default("desc"),
   category: equipmentCategoryEnum.optional(),

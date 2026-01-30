@@ -20,7 +20,7 @@ export const prerender = false;
  *
  * Query Parameters:
  * - page (optional): Page number, default 1, min 1
- * - limit (optional): Items per page, default 50, min 1, max 100
+ * - limit (optional): Items per page, default 10, min 1, max 100
  * - sort (optional): Sort field (created_at, name, equipment_id, category, manufacturer)
  * - order (optional): Sort order (asc, desc), default desc
  * - category (optional): Filter by equipment category
@@ -86,6 +86,7 @@ export const GET: APIRoute = async ({ locals, request }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Error fetching equipment:", error);
     const errorResponse: ErrorResponse = { error: "Internal server error" };
     return new Response(JSON.stringify(errorResponse), {
@@ -170,6 +171,7 @@ export const POST: APIRoute = async ({ locals, request }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Error creating equipment:", error);
 
     // Handle duplicate serial number

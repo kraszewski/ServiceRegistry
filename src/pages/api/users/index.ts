@@ -92,6 +92,7 @@ export const GET: APIRoute = async ({ locals, request }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Error fetching users:", error);
     const errorResponse: ErrorResponse = { error: "Internal server error" };
     return new Response(JSON.stringify(errorResponse), {
@@ -184,6 +185,7 @@ export const POST: APIRoute = async ({ locals, request }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Error creating user:", error);
 
     // Handle duplicate email error

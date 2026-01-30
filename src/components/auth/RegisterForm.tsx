@@ -78,6 +78,7 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
       onSuccess?.();
       window.location.href = "/equipment";
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Registration error:", error);
       const errorMessage = error instanceof Error ? error.message : "Wystąpił błąd podczas rejestracji";
 

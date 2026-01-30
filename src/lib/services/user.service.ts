@@ -144,6 +144,7 @@ export class UserService {
 
     if (profileError) {
       // Cleanup: delete auth user if profile fetch fails
+      // eslint-disable-next-line no-console
       console.error("Profile fetch failed, cleaning up auth user:", profileError);
       await supabaseAdmin.auth.admin.deleteUser(userId);
       throw new Error(`Failed to fetch user profile: ${profileError.message}`);

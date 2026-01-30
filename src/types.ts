@@ -66,7 +66,7 @@ export interface ErrorResponse {
 export interface PaginationParams {
   /** Page number (1-indexed). Default: 1 */
   page?: number;
-  /** Items per page. Default: 50, Max: 100 */
+  /** Items per page. Default: 10, Max: 100 */
   limit?: number;
 }
 

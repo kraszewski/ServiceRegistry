@@ -104,6 +104,7 @@ export function EquipmentListPage() {
       closeDeleteDialog();
       refetch();
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Delete error:", error);
 
       const apiError = error as { status?: number };
@@ -201,7 +202,7 @@ export function EquipmentListPage() {
   const equipmentData = data?.data || [];
   const pagination = data?.pagination || {
     page: 1,
-    limit: 50,
+    limit: 10,
     total: 0,
     totalPages: 0,
   };
@@ -249,7 +250,7 @@ export function EquipmentListPage() {
             )}
 
             {/* Pagination */}
-            {pagination.totalPages > 1 && (
+            {pagination.total > pagination.limit && (
               <Pagination
                 currentPage={pagination.page}
                 totalPages={pagination.totalPages}

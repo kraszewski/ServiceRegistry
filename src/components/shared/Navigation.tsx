@@ -46,6 +46,7 @@ export function Navigation({ currentPage, isAuthenticated: initialAuth, userEmai
       // Redirect to login page after successful logout
       window.location.href = "/";
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Logout error:", error);
       toast.error("Nie udało się wylogować");
     } finally {

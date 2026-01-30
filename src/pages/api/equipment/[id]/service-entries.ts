@@ -89,6 +89,7 @@ export const GET: APIRoute = async ({ params, locals, request }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Error fetching service entries:", error);
 
     if (error instanceof Error && error.message === "Equipment not found") {
@@ -191,6 +192,7 @@ export const POST: APIRoute = async ({ params, locals, request }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Error creating service entry:", error);
 
     if (error instanceof Error && error.message === "Equipment not found") {

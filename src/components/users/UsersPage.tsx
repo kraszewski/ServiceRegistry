@@ -43,11 +43,6 @@ export function UsersPage() {
     user: null,
   });
 
-  // Debug: log dialog state changes
-  useEffect(() => {
-    console.log("AddUserDialog state changed:", addUserDialogOpen);
-  }, [addUserDialogOpen]);
-
   // Listen for URL changes (browser back/forward)
   useEffect(() => {
     const handleParamsChanged = () => {
@@ -65,7 +60,6 @@ export function UsersPage() {
 
   // Handlers for dialogs
   const openAddUserDialog = () => {
-    console.log("Opening add user dialog...");
     setAddUserDialogOpen(true);
   };
 
@@ -92,6 +86,7 @@ export function UsersPage() {
       closeDeleteDialog();
       refetch();
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Delete error:", error);
 
       const apiError = error as { status?: number; data?: { error?: string } };

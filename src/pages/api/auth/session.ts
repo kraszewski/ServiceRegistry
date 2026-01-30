@@ -62,6 +62,7 @@ export const GET: APIRoute = async ({ locals, cookies }) => {
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Session error:", error);
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
