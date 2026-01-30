@@ -19,7 +19,7 @@ export function EquipmentTableSkeleton({ rowCount = 10 }: EquipmentTableSkeleton
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Equipment ID</TableHead>
+            <TableHead>ID sprzętu</TableHead>
             <TableHead>Nazwa</TableHead>
             <TableHead>Producent</TableHead>
             <TableHead>Model</TableHead>

@@ -81,7 +81,7 @@ export function EquipmentTable({
           <TableRow>
             <TableHead>
               <SortButton field="equipment_id" currentSort={sortConfig} onSort={onSort}>
-                Equipment ID
+                ID sprzętu
               </SortButton>
             </TableHead>
             <TableHead>

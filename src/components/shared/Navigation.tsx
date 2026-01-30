@@ -58,23 +58,25 @@ export function Navigation({ currentPage, isAuthenticated: initialAuth, userEmai
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 sm:px-6 py-3 max-w-7xl">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1">
-            <Button variant={currentPage === "equipment" ? "default" : "ghost"} size="sm" asChild>
-              <a href="/equipment" className="flex items-center gap-2">
-                <Package className="h-4 w-4" />
-                <span className="hidden sm:inline">Sprzęt</span>
-              </a>
-            </Button>
-
-            {isOwner && (
-              <Button variant={currentPage === "users" ? "default" : "ghost"} size="sm" asChild>
-                <a href="/users" className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  <span className="hidden sm:inline">Użytkownicy</span>
+          {isAuthenticated && (
+            <div className="flex items-center gap-1">
+              <Button variant={currentPage === "equipment" ? "default" : "ghost"} size="sm" asChild>
+                <a href="/equipment" className="flex items-center gap-2">
+                  <Package className="h-4 w-4" />
+                  <span className="hidden sm:inline">Sprzęt</span>
                 </a>
               </Button>
-            )}
-          </div>
+
+              {isOwner && (
+                <Button variant={currentPage === "users" ? "default" : "ghost"} size="sm" asChild>
+                  <a href="/users" className="flex items-center gap-2">
+                    <Users className="h-4 w-4" />
+                    <span className="hidden sm:inline">Użytkownicy</span>
+                  </a>
+                </Button>
+              )}
+            </div>
+          )}
 
           {isAuthenticated && (
             <div className="flex items-center gap-2">
