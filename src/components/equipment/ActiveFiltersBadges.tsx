@@ -10,7 +10,7 @@ import { getCategoryLabel } from "@/lib/constants/equipment-categories";
 import type { EquipmentCategory } from "@/types";
 
 export interface ActiveFilter {
-  type: "category";
+  type: "category" | "search";
   value: string;
   label: string;
 }
@@ -60,7 +60,10 @@ export function ActiveFiltersBadges({ filters, onRemoveFilter, onClearAll }: Act
 /**
  * Helper to build active filters array from current params
  */
-export function buildActiveFilters(category: EquipmentCategory | null | undefined): ActiveFilter[] {
+export function buildActiveFilters(
+  category: EquipmentCategory | null | undefined,
+  search: string | null | undefined
+): ActiveFilter[] {
   const filters: ActiveFilter[] = [];
 
   if (category) {
@@ -68,6 +71,14 @@ export function buildActiveFilters(category: EquipmentCategory | null | undefine
       type: "category",
       value: category,
       label: getCategoryLabel(category),
+    });
+  }
+
+  if (search) {
+    filters.push({
+      type: "search",
+      value: search,
+      label: `ID: ${search}`,
     });
   }
 

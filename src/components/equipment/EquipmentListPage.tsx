@@ -145,9 +145,14 @@ export function EquipmentListPage() {
     setParams({ category: category || undefined, page: 1 });
   };
 
+  // Handler for search filter change
+  const handleSearchChange = (search: string) => {
+    setParams({ search: search || undefined, page: 1 });
+  };
+
   // Handler for clearing all filters
   const handleClearFilters = () => {
-    setParams({ category: undefined, page: 1 });
+    setParams({ category: undefined, search: undefined, page: 1 });
   };
 
   // Handler for page change
@@ -165,7 +170,7 @@ export function EquipmentListPage() {
   };
 
   // Determine empty state variant
-  const hasFilters = !!params.category;
+  const hasFilters = !!params.category || !!params.search;
   const emptyVariant = hasFilters ? "no-results" : "no-data";
 
   // Loading state
@@ -209,7 +214,9 @@ export function EquipmentListPage() {
         {/* Filters */}
         <FilterBar
           selectedCategory={params.category || null}
+          searchQuery={params.search || ""}
           onCategoryChange={handleCategoryChange}
+          onSearchChange={handleSearchChange}
           onClearAllFilters={handleClearFilters}
         />
 
