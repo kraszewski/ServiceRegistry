@@ -33,7 +33,7 @@ Lists all users. **Owner only.**
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | page | integer | 1 | Page number |
-| limit | integer | 50 | Items per page (max 100) |
+| limit: 10 | Items per page (max 100) |
 
 **Response (200 OK):**
 ```json
@@ -49,7 +49,7 @@ Lists all users. **Owner only.**
   ],
   "pagination": {
     "page": 1,
-    "limit": 50,
+    "limit: 10,
     "total": 100,
     "totalPages": 2
   }
@@ -156,7 +156,7 @@ Lists all equipment with pagination, sorting, and filtering.
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | page | integer | 1 | Page number |
-| limit | integer | 50 | Items per page (max 100) |
+| limit: 10 | Items per page (max 100) |
 | sort | string | created_at | Sort field: `created_at`, `name`, `equipment_id`, `category`, `manufacturer` |
 | order | string | desc | Sort order: `asc`, `desc` |
 | category | string | - | Filter by category (enum value) |
@@ -186,7 +186,7 @@ Lists all equipment with pagination, sorting, and filtering.
   ],
   "pagination": {
     "page": 1,
-    "limit": 50,
+    "limit: 10,
     "total": 100,
     "totalPages": 2
   }
@@ -374,7 +374,7 @@ Lists service entries for specific equipment.
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | page | integer | 1 | Page number |
-| limit | integer | 50 | Items per page (max 100) |
+| limit: 10 | Items per page (max 100) |
 
 **Response (200 OK):**
 ```json
@@ -404,7 +404,7 @@ Lists service entries for specific equipment.
   ],
   "pagination": {
     "page": 1,
-    "limit": 50,
+    "limit: 10,
     "total": 25,
     "totalPages": 1
   }
@@ -720,7 +720,7 @@ All list endpoints support offset-based pagination:
 ```typescript
 const paginationSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(100).default(50)
+  limit: 10)
 });
 
 // Calculate offset

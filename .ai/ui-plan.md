@@ -98,7 +98,7 @@ ServiceRegistry to aplikacja webowa do zarządzania sprzętem i historią serwis
 - Prefetching następnej strony (TanStack Query)
 - Keyboard navigation (Tab przez wiersze/karty, Enter otwiera szczegóły)
 - ARIA sort attributes dla sortable columns
-- Server-side pagination (limit 50, max 100)
+- Server-side pagination (limit: 10, max 100)
 
 ### 2.3 Equipment Details (`/equipment/[id]`)
 
@@ -314,7 +314,7 @@ ServiceRegistry to aplikacja webowa do zarządzania sprzętem i historią serwis
 2. **Middleware Check**: Server-side sprawdza rolę
 3. **If worker**: Redirect do `/equipment` + Toast "Brak uprawnień"
 4. **If owner**: Renderuje `/users`
-5. **API Call**: `GET /api/users?page=1&limit=50`
+5. **API Call**: `GET /api/users?page=1&limit: 10`
 6. **Loading State**: Skeleton dla tabeli/kart
 7. Widzi listę użytkowników
 8. Klika "+ Dodaj Pracownika"
@@ -718,7 +718,7 @@ const { isOwner } = useUserRole();
 
 | UI Action | API Endpoint | Method | Response Handling |
 |-----------|--------------|--------|-------------------|
-| Equipment list load | `/api/equipment?page=X&limit=50&sort=Y&order=Z&category=W` | GET | Display table/cards, update pagination |
+| Equipment list load | `/api/equipment?page=X&limit: 10&sort=Y&order=Z&category=W` | GET | Display table/cards, update pagination |
 | Search by ID | `/api/equipment?search={id}` | GET | Redirect to details, or toast "Not found" |
 | Add equipment (form submit) | `/api/equipment` | POST | Toast success, redirect to `/equipment/[id]`, 409: toast "Serial number exists" |
 | Equipment details load | `/api/equipment/{id}` | GET | Display data card, 404: toast + redirect to list |
@@ -729,7 +729,7 @@ const { isOwner } = useUserRole();
 
 | UI Action | API Endpoint | Method | Response Handling |
 |-----------|--------------|--------|-------------------|
-| Service entries list load | `/api/equipment/{equipmentId}/service-entries?page=X&limit=50` | GET | Display timeline, update pagination |
+| Service entries list load | `/api/equipment/{equipmentId}/service-entries?page=X&limit: 10` | GET | Display timeline, update pagination |
 | Add service entry (form submit) | `/api/equipment/{equipmentId}/service-entries` | POST | Toast success, optimistic update timeline, 404: toast + redirect |
 | Get service entry | `/api/service-entries/{id}` | GET | Populate edit form |
 | Edit service entry (form submit) | `/api/service-entries/{id}` | PATCH | Toast success, update timeline item |
@@ -739,7 +739,7 @@ const { isOwner } = useUserRole();
 
 | UI Action | API Endpoint | Method | Response Handling |
 |-----------|--------------|--------|-------------------|
-| Users list load | `/api/users?page=X&limit=50` | GET | Display table/cards, update pagination |
+| Users list load | `/api/users?page=X&limit: 10` | GET | Display table/cards, update pagination |
 | Add user (form submit) | `/api/users` | POST | Toast success, update list, 409: toast "Email exists" |
 | Get user details | `/api/users/{id}` | GET | Display in table/card row |
 | Delete user (owner) | `/api/users/{id}` | DELETE | Toast success, update list, 409: toast "User has service entries", confirmation dialog |

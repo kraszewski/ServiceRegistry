@@ -19,7 +19,7 @@ Endpoint `GET /api/equipment` służy do pobierania paginowanej listy sprzętu z
 | Parametr | Typ | Domyślna wartość | Opis | Walidacja |
 |----------|-----|------------------|------|-----------|
 | `page` | integer | 1 | Numer strony (1-indexed) | min: 1 |
-| `limit` | integer | 50 | Liczba elementów na stronę | min: 1, max: 100 |
+| `limit` | integer | 10 | Liczba elementów na stronę | min: 1, max: 100 |
 | `sort` | string | created_at | Pole sortowania | enum: created_at, name, equipment_id, category, manufacturer |
 | `order` | string | desc | Kierunek sortowania | enum: asc, desc |
 | `category` | string | - | Filtr kategorii | enum: equipment_category |
@@ -81,7 +81,7 @@ const equipmentCategoryEnum = z.enum([
 
 export const equipmentListParamsSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(100).default(50),
+  limit: z.coerce.number().int().min(1).max(100).default(10),
   sort: z.enum(["created_at", "name", "equipment_id", "category", "manufacturer"]).default("created_at"),
   order: z.enum(["asc", "desc"]).default("desc"),
   category: equipmentCategoryEnum.optional(),
@@ -118,9 +118,9 @@ export type EquipmentListParamsInput = z.infer<typeof equipmentListParamsSchema>
   ],
   "pagination": {
     "page": 1,
-    "limit": 50,
+    "limit": 10,
     "total": 150,
-    "totalPages": 3
+    "totalPages": 15
   }
 }
 ```
@@ -139,7 +139,7 @@ export type EquipmentListParamsInput = z.infer<typeof equipmentListParamsSchema>
 ┌─────────────────┐
 │   Klient HTTP   │
 └────────┬────────┘
-         │ GET /api/equipment?page=1&limit=50&category=computer
+         │ GET /api/equipment?page=1&limit=10&category=computer
          ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                    API Route Handler                         │
@@ -345,7 +345,7 @@ export const equipmentCategoryEnum = z.enum([
  */
 export const equipmentListParamsSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(100).default(50),
+  limit: z.coerce.number().int().min(1).max(100).default(10),
   sort: z
     .enum(["created_at", "name", "equipment_id", "category", "manufacturer"])
     .default("created_at"),
@@ -394,7 +394,7 @@ export class EquipmentService {
   async listEquipment(params: EquipmentListParams): Promise<EquipmentListResponse> {
     const {
       page = 1,
-      limit = 50,
+      limit = 10,
       sort = "created_at",
       order = "desc",
       category,

@@ -928,7 +928,7 @@ const useCreateServiceEntry = () => {
       
       // Snapshot previous value
       const previousEntries = queryClient.getQueryData(
-        ['service-entries', 'list', { equipmentId: data.equipmentId, page: 1, limit: 50 }]
+        ['service-entries', 'list', { equipmentId: data.equipmentId, page: 1, limit: 10 }]
       );
       
       // Optimistically update (dodaj wpis na górę listy z temporary ID)
@@ -940,7 +940,7 @@ const useCreateServiceEntry = () => {
       // Revert optimistic update on error
       if (context?.previousEntries) {
         queryClient.setQueryData(
-          ['service-entries', 'list', { equipmentId: variables.equipmentId, page: 1, limit: 50 }],
+          ['service-entries', 'list', { equipmentId: variables.equipmentId, page: 1, limit: 10 }],
           context.previousEntries
         );
       }
@@ -1101,7 +1101,7 @@ const useEquipmentDetailsPage = (equipmentId: string) => {
   
   // Queries
   const equipmentQuery = useEquipmentDetails(equipmentId);
-  const entriesQuery = useServiceEntries(equipmentId, { page, limit: 50 });
+  const entriesQuery = useServiceEntries(equipmentId, { page, limit: 10 });
   
   // Mutations
   const updateEquipmentMutation = useUpdateEquipment();
@@ -1215,7 +1215,7 @@ if (error) {
 **Request:**
 - Method: GET
 - Path param: `equipmentId` (UUID sprzętu)
-- Query params: `page` (default 1), `limit` (default 50)
+- Query params: `page` (default 1), `limit: 10)
 - Headers: Cookie (session)
 
 **Response Type:** `ServiceEntryListResponse`
@@ -1240,7 +1240,7 @@ if (error) {
 
 **Wykorzystanie w komponencie:**
 ```typescript
-const { data, isLoading, error } = useServiceEntries(equipmentId, { page, limit: 50 });
+const { data, isLoading, error } = useServiceEntries(equipmentId, { page, limit: 10 });
 const entries = data?.data ?? [];
 const pagination = data?.pagination;
 ```
@@ -1552,7 +1552,7 @@ const onConfirmDelete = async () => {
 2. Na dole timeline znajdują się kontrolki paginacji (Previous, 1, 2, 3, Next)
 3. Użytkownik klika "Next" lub konkretny numer strony
 4. Loading spinner na paginacji
-5. API call `GET /api/equipment/{id}/service-entries?page=X&limit=50`
+5. API call `GET /api/equipment/{id}/service-entries?page=X&limit: 10`
 6. Timeline odświeża się z nowymi wpisami
 
 **Oczekiwany wynik:** Użytkownik widzi następną stronę wpisów, dane wcześniejszych wpisów pozostają w cache (TanStack Query).

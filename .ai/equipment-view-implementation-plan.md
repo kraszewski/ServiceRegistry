@@ -27,7 +27,7 @@ Główne funkcje widoku:
 | Parametr | Typ | Domyślna | Opis |
 |----------|-----|----------|------|
 | `page` | number | 1 | Numer strony (1-indexed) |
-| `limit` | number | 50 | Elementy na stronę (max 100) |
+| `limit` | number | 10 | Elementy na stronę (max 100) |
 | `sort` | string | `created_at` | Pole sortowania |
 | `order` | string | `desc` | Kierunek: `asc` \| `desc` |
 | `category` | string | - | Filtr kategorii |
@@ -913,7 +913,7 @@ const { isOwner } = useUserRole();
 ```typescript
 interface EquipmentListParams {
   page?: number;      // default: 1
-  limit?: number;     // default: 50, max: 100
+  limit?: number;     // default: 10, max: 100
   sort?: string;      // default: 'created_at'
   order?: string;     // default: 'desc'
   category?: string;  // filter by category
@@ -1197,7 +1197,7 @@ export async function deleteEquipment(id: string): Promise<DeleteResponse> {
 | Parametr | Warunki | Fallback |
 |----------|---------|----------|
 | `page` | integer >= 1 | 1 |
-| `limit` | integer 1-100 | 50 |
+| `limit` | integer 1-100 | 10 |
 | `sort` | enum: created_at, name, equipment_id, category, manufacturer | created_at |
 | `order` | enum: asc, desc | desc |
 | `category` | enum: equipment_category lub puste | null |

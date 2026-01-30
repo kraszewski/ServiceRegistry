@@ -23,7 +23,7 @@ Endpoint `GET /api/equipment/{equipmentId}/service-entries` służy do pobierani
 | Parametr | Typ | Domyślnie | Opis | Walidacja |
 |----------|-----|-----------|------|-----------|
 | `page` | integer | 1 | Numer strony | min: 1 |
-| `limit` | integer | 50 | Liczba elementów na stronę | min: 1, max: 100 |
+| `limit: 10 | Liczba elementów na stronę | min: 1, max: 100 |
 
 ### Nagłówki
 
@@ -77,7 +77,7 @@ import { z } from "zod";
 
 export const serviceEntryListParamsSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(100).default(50),
+  limit: 10),
 });
 
 export type ServiceEntryListParams = z.infer<typeof serviceEntryListParamsSchema>;
@@ -117,7 +117,7 @@ export const equipmentIdSchema = z.string().uuid("Invalid equipment ID format");
   ],
   "pagination": {
     "page": 1,
-    "limit": 50,
+    "limit: 10,
     "total": 25,
     "totalPages": 1
   }
@@ -140,7 +140,7 @@ export const equipmentIdSchema = z.string().uuid("Invalid equipment ID format");
 ┌─────────────────┐
 │   Klient HTTP   │
 └────────┬────────┘
-         │ GET /api/equipment/{equipmentId}/service-entries?page=1&limit=50
+         │ GET /api/equipment/{equipmentId}/service-entries?page=1&limit: 10
          ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                    API Route Handler                         │
@@ -345,7 +345,7 @@ import { z } from "zod";
  */
 export const serviceEntryListParamsSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(100).default(50),
+  limit: 10),
 });
 
 export type ServiceEntryListParams = z.infer<typeof serviceEntryListParamsSchema>;
@@ -565,7 +565,7 @@ export const GET: APIRoute = async ({ params, locals, request }) => {
    ```bash
    curl -X GET "http://localhost:4321/api/equipment/550e8400-e29b-41d4-a716-446655440000/service-entries" \
      -H "Cookie: sb-access-token=..."
-   # Oczekiwany: 200 OK z paginacją page=1, limit=50
+   # Oczekiwany: 200 OK z paginacją page=1, limit: 10
    ```
 
 5. **Test z parametrami paginacji:**
